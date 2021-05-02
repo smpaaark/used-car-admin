@@ -1,5 +1,6 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.web.dto.HelloResponseDto;
 import org.junit.Test;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;

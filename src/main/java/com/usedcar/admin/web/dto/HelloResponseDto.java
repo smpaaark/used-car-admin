@@ -1,6 +1,5 @@
-package com.usedcar.admin.web;
+package com.usedcar.admin.web.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
