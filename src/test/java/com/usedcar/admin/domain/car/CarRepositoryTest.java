@@ -57,7 +57,7 @@ public class CarRepositoryTest {
         assertThat(car.getModel()).isEqualTo(model);
         assertThat(car.getColor()).isEqualTo(color);
         assertThat(car.getProductionYear()).isEqualTo(productionYear);
-        assertThat(car.getPurchaseDate()).isEqualTo(purchaseDate);
+        assertThat(car.getPurchaseDate()).isAfter(purchaseDate);
     }
 
 }
