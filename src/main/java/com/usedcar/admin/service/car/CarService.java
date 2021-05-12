@@ -15,8 +15,20 @@ public class CarService {
     private final CarRepository carRepository;
 
     @Transactional
-    public Long save(CarSaveRequestDto requestDto) {
-        return carRepository.save(requestDto.toEntity()).getId();
+    public CarSaveResponseDto save(CarSaveRequestDto requestDto) {
+        validateDuplicateCar(requestDto);
+        Long id = carRepository.save(requestDto.toEntity()).getId();
+
+        return CarSaveResponseDto.builder()
+                .id(id)
+                .build();
+    }
+
+    private void validateDuplicateCar(CarSaveRequestDto requestDto) {
+        int count = carRepository.countByCarNumber(requestDto.getCarNumber());
+        if (count > 0) {
+            throw new IllegalArgumentException("이미 매입되어있는 차량입니다. 차량번호: " + requestDto.getCarNumber());
+        }
     }
 
 }

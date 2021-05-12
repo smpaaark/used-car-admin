@@ -17,11 +17,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
 public class CarRepositoryTest {
 
     @Autowired
     CarRepository carRepository;
+
+    @After
+    public void clean() throws Exception {
+        carRepository.deleteAll();
+    }
 
     @Test
     public void 차량_매입하기() throws Exception {
@@ -32,13 +36,14 @@ public class CarRepositoryTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
-        LocalDateTime purchaseDate = LocalDateTime.now();
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
         // when
-        Car savedCar = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate));
 
         // then
-        assertThat(savedCar.getId()).isEqualTo(1L);
+        List<Car> carList = carRepository.findAll();
+        Car savedCar = carList.get(0);
         assertThat(savedCar.getVin()).isEqualTo(vin);
         assertThat(savedCar.getCategory()).isEqualTo(category);
         assertThat(savedCar.getModel()).isEqualTo(model);
@@ -58,7 +63,7 @@ public class CarRepositoryTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
-        LocalDateTime purchaseDate = LocalDateTime.now();
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
         carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate));
 

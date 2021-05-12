@@ -5,6 +5,7 @@ import com.usedcar.admin.domain.car.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@ToString
 public class CarSaveRequestDto {
 
     @NotEmpty
