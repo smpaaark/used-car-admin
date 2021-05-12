@@ -1,8 +1,10 @@
 package com.usedcar.admin.web;
 
 import com.usedcar.admin.web.dto.ExceptionResponseDto;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
