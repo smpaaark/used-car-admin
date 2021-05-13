@@ -3,7 +3,7 @@ package com.usedcar.admin.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.domain.car.Category;
-import com.usedcar.admin.web.dto.CarSaveRequestDto;
+import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,7 +64,10 @@ public class CarApiControllerTest {
 
                 // then
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(jsonPath("$.status").value("201"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data.id").exists());
     }
     
     @Test
@@ -80,9 +83,12 @@ public class CarApiControllerTest {
 
         // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].objectName").exists())
-                .andExpect(jsonPath("$[0].defaultMessage").exists())
-                .andExpect(jsonPath("$[0].code").exists());
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").value("필수값 오류"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data[0].objectName").exists())
+                .andExpect(jsonPath("$.data[0].field").exists())
+                .andExpect(jsonPath("$.data[0].defaultMessage").exists());
     }
 
     @Test
@@ -113,7 +119,10 @@ public class CarApiControllerTest {
 
         // then
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.responseDate").exists());
     }
 
 }

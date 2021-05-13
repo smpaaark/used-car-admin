@@ -1,4 +1,4 @@
-package com.usedcar.admin.web.dto;
+package com.usedcar.admin.web.dto.car;
 
 import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.Category;

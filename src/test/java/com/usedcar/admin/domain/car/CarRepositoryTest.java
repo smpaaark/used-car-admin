@@ -55,9 +55,11 @@ public class CarRepositoryTest {
     }
 
     @Test
-    public void 차량매입_불러오기() throws Exception {
+    public void 차량_전체_조회하기() throws Exception {
         // given
-        String carNumber = "04구4716";
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
         String vin = "12345678";
         Category category = Category.DOMESTIC;
         String model = "더 뉴 K5";
@@ -65,14 +67,17 @@ public class CarRepositoryTest {
         String productionYear = "2018";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
-        carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate));
 
         // when
-        List<Car> carList = carRepository.findAll();
+        List<Car> carList = carRepository.findAllByOrderByIdDesc();
 
         // then
+        assertThat(carList.size()).isEqualTo(3);
         Car car = carList.get(0);
-        assertThat(car.getCarNumber()).isEqualTo(carNumber);
+        assertThat(car.getCarNumber()).isEqualTo(carNumber3);
         assertThat(car.getVin()).isEqualTo(vin);
         assertThat(car.getCategory()).isEqualTo(category);
         assertThat(car.getModel()).isEqualTo(model);

@@ -1,4 +1,4 @@
-package com.usedcar.admin.web.dto.errors;
+package com.usedcar.admin.web.dto;
 
 import java.io.IOException;
 
