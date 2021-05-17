@@ -1,4 +1,4 @@
-package com.usedcar.admin.web.dto.car;
+package com.usedcar.admin.service.car;
 
 import com.usedcar.admin.domain.car.Car;
 import lombok.Getter;
@@ -6,11 +6,11 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class CarSaveResponseDto {
+public class CarDeleteResponseDto {
 
     private Long id;
 
-    public CarSaveResponseDto(Car car) {
+    public CarDeleteResponseDto(Car car) {
         this.id = car.getId();
     }
 

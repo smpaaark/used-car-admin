@@ -1,4 +1,5 @@
 .mvn
+.log
 
 HELP.md
 target/

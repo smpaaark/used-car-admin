@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,9 +29,11 @@ public class CarRepositoryTest {
     }
 
     @Test
-    public void 차량_매입하기() throws Exception {
+    public void 차량_갯수_체크() throws Exception {
         // given
-        String carNumber = "04구4716";
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
         String vin = "12345678";
         Category category = Category.DOMESTIC;
         String model = "더 뉴 K5";
@@ -38,20 +41,15 @@ public class CarRepositoryTest {
         String productionYear = "2018";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate));
+
         // when
-        carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate));
+        int count = carRepository.countByCarNumber(carNumber1);
 
         // then
-        List<Car> carList = carRepository.findAll();
-        Car savedCar = carList.get(0);
-        assertThat(savedCar.getVin()).isEqualTo(vin);
-        assertThat(savedCar.getCategory()).isEqualTo(category);
-        assertThat(savedCar.getModel()).isEqualTo(model);
-        assertThat(savedCar.getColor()).isEqualTo(color);
-        assertThat(savedCar.getProductionYear()).isEqualTo(productionYear);
-        assertThat(savedCar.getPurchaseDate()).isEqualTo(purchaseDate);
-        assertThat(savedCar.getCreatedDate()).isAfter(purchaseDate);
-        assertThat(savedCar.getModifiedDate()).isAfter(purchaseDate);
+        assertThat(count).isEqualTo(1);
     }
 
     @Test
@@ -72,11 +70,12 @@ public class CarRepositoryTest {
         carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate));
 
         // when
-        List<Car> carList = carRepository.findAllByOrderByIdDesc();
+        List<Car> carList = carRepository.findAllDesc();
 
         // then
         assertThat(carList.size()).isEqualTo(3);
         Car car = carList.get(0);
+        assertThat(car.getId()).isGreaterThan(carList.get(1).getId());
         assertThat(car.getCarNumber()).isEqualTo(carNumber3);
         assertThat(car.getVin()).isEqualTo(vin);
         assertThat(car.getCategory()).isEqualTo(category);
@@ -84,6 +83,7 @@ public class CarRepositoryTest {
         assertThat(car.getColor()).isEqualTo(color);
         assertThat(car.getProductionYear()).isEqualTo(productionYear);
         assertThat(car.getPurchaseDate()).isNotNull();
+        assertThat(car.getStatus()).isNotEqualTo(CarStatus.DELETE);
         assertThat(car.getCreatedDate()).isAfter(purchaseDate);
         assertThat(car.getModifiedDate()).isAfter(purchaseDate);
     }

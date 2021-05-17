@@ -6,12 +6,11 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class CarSaveResponseDto {
+public class CarUpdateResponseDto {
 
     private Long id;
 
-    public CarSaveResponseDto(Car car) {
+    public CarUpdateResponseDto(Car car) {
         this.id = car.getId();
     }
-
 }

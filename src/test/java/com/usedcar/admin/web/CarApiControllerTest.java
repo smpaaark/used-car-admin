@@ -1,8 +1,11 @@
 package com.usedcar.admin.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.CarRepository;
+import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.domain.car.Category;
+import com.usedcar.admin.web.dto.CarUpdateRequestDto;
 import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
 import org.junit.After;
 import org.junit.Test;
@@ -14,7 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,13 +68,24 @@ public class CarApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andDo(print())
-
-                // then
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("201"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data.id").exists());
+                .andExpect(jsonPath("$.data").exists());
+
+        // then
+        List<Car> list = carRepository.findAll();
+        Car car = list.get(0);
+        assertThat(car.getId()).isGreaterThan(0L);
+        assertThat(car.getCarNumber()).isEqualTo(carNumber);
+        assertThat(car.getVin()).isEqualTo(vin);
+        assertThat(car.getCategory()).isEqualTo(category);
+        assertThat(car.getModel()).isEqualTo(model);
+        assertThat(car.getColor()).isEqualTo(color);
+        assertThat(car.getProductionYear()).isEqualTo(productionYear);
+        assertThat(car.getPurchaseDate()).isNotNull();
+        assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
     }
     
     @Test
@@ -80,8 +98,6 @@ public class CarApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andDo(print())
-
-        // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.message").value("필수값 오류"))
@@ -116,13 +132,222 @@ public class CarApiControllerTest {
         mvc.perform(post("/api/car")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
-
-        // then
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.responseDate").exists());
+    }
+    
+    @Test
+    public void 차량_전체_조회_최신순() throws Exception {
+        // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate));
+
+        // when
+        mvc.perform(get("/api/cars")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data[0].id").isNotEmpty());
+    }
+
+    @Test
+    public void 차량_전체_조회_0개() throws Exception {
+        // given
+
+        // when
+        mvc.perform(get("/api/cars")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    
+    @Test
+    public void 차량_1개_조회() throws Exception {
+        // given
+        String carNumber = "04구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+
+        // when
+        mvc.perform(get("/api/car/" + carId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // then
+        List<Car> list = carRepository.findAll();
+        Car car = list.get(0);
+        assertThat(car.getId()).isGreaterThan(0L);
+        assertThat(car.getCarNumber()).isEqualTo(carNumber);
+        assertThat(car.getVin()).isEqualTo(vin);
+        assertThat(car.getCategory()).isEqualTo(category);
+        assertThat(car.getModel()).isEqualTo(model);
+        assertThat(car.getColor()).isEqualTo(color);
+        assertThat(car.getProductionYear()).isEqualTo(productionYear);
+        assertThat(car.getPurchaseDate()).isNotNull();
+        assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
+    }
+
+    @Test
+    public void 차량_1개_조회_존재하지_않는_차량() throws Exception {
+        // given
+
+        // when
+        mvc.perform(get("/api/car/0")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    
+    @Test
+    public void 차량_정보_수정() throws Exception {
+        // given
+        String carNumber = "04구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+
+        Category category2 = Category.FOREIGN;
+        String model2 = "G70";
+        String color2 = "흰색";
+        String productionYear2 = "2021";
+        CarUpdateRequestDto requestDto = CarUpdateRequestDto.builder()
+                .category(category2)
+                .model(model2)
+                .color(color2)
+                .productionYear(productionYear2)
+                .build();
+
+        // when
+        mvc.perform(put("/api/car/" + carId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").value(carId));
+
+        // then
+        List<Car> list = carRepository.findAll();
+        assertThat(list.get(0).getCategory()).isEqualTo(category2);
+        assertThat(list.get(0).getModel()).isEqualTo(model2);
+        assertThat(list.get(0).getColor()).isEqualTo(color2);
+        assertThat(list.get(0).getProductionYear()).isEqualTo(productionYear2);
+    }
+    
+    @Test
+    public void 차량_정보_수정_존재하지_않는_차량() throws Exception {
+        // given
+        CarUpdateRequestDto requestDto = CarUpdateRequestDto.builder().build();
+
+        // when
+        mvc.perform(put("/api/car/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    
+    @Test
+    public void 차량_삭제() throws Exception {
+        // given
+        String carNumber = "04구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+
+        // when
+        mvc.perform(delete("/api/car/" + carId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data.id").value(carId));
+        
+        // then
+        List<Car> list = carRepository.findAll();
+        Car car = list.get(0);
+        assertThat(car.getStatus()).isEqualTo(CarStatus.DELETE);
+    }
+
+    private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate) {
+        return Car.builder()
+                .carNumber(carNumber)
+                .vin(vin)
+                .category(category)
+                .model(model)
+                .color(color)
+                .productionYear(productionYear)
+                .purchaseDate(purchaseDate)
+                .build();
+    }
+    
+    @Test
+    public void 차량_삭제_존재하지_않는_차량() throws Exception {
+        // given
+        
+        // when
+        mvc.perform(delete("/api/car/0")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
 }

@@ -1,12 +1,17 @@
 package com.usedcar.admin.service.car;
 
+import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.exception.DuplicatedCarNumberException;
-import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
-import com.usedcar.admin.web.dto.car.CarSaveResponseDto;
+import com.usedcar.admin.exception.NotFoundCarException;
+import com.usedcar.admin.web.dto.CarUpdateRequestDto;
+import com.usedcar.admin.web.dto.car.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +26,46 @@ public class CarService {
     @Transactional
     public CarSaveResponseDto save(CarSaveRequestDto requestDto) {
         validateDuplicateCar(requestDto);
-        Long id = carRepository.save(requestDto.toEntity()).getId();
+        return new CarSaveResponseDto(carRepository.save(requestDto.toEntity()));
+    }
 
-        return CarSaveResponseDto.builder()
-                .id(id)
-                .build();
+    /**
+     * 차량 전체 조회 (최신순)
+     */
+    public List<CarFindAllResponseDto> findAllDesc() {
+        List<Car> cars = carRepository.findAllDesc();
+
+        return cars.stream().map(CarFindAllResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 차량 1개 조회
+     */
+    public CarFindResponseDto findById(Long carId) {
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        return new CarFindResponseDto(car);
+    }
+
+    /**
+     * 차량 정보 수정
+     */
+    @Transactional
+    public CarUpdateResponseDto update(Long carId, CarUpdateRequestDto requestDto) {
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        car.update(requestDto);
+
+        return new CarUpdateResponseDto(car);
+    }
+
+    /**
+     * 차량 삭제
+     */
+    @Transactional
+    public CarDeleteResponseDto delete(Long carId) {
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        car.delete();
+
+        return new CarDeleteResponseDto(car);
     }
 
     /**
@@ -37,5 +77,4 @@ public class CarService {
             throw new DuplicatedCarNumberException("이미 매입되어있는 차량입니다.(차량번호: " + requestDto.getCarNumber() + ")");
         }
     }
-
 }
