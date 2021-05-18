@@ -2,9 +2,11 @@ package com.usedcar.admin.service.car;
 
 import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.CarRepository;
+import com.usedcar.admin.domain.car.CarStatus;
+import com.usedcar.admin.exception.AlreadyReleasedCarException;
 import com.usedcar.admin.exception.DuplicatedCarNumberException;
 import com.usedcar.admin.exception.NotFoundCarException;
-import com.usedcar.admin.web.dto.CarUpdateRequestDto;
+import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
 import com.usedcar.admin.web.dto.car.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ public class CarService {
      * 차량 1개 조회
      */
     public CarFindResponseDto findById(Long carId) {
-        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(carId: " + carId + ")"));
         return new CarFindResponseDto(car);
     }
 
@@ -51,7 +53,7 @@ public class CarService {
      */
     @Transactional
     public CarUpdateResponseDto update(Long carId, CarUpdateRequestDto requestDto) {
-        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(carId: " + carId + ")"));
         car.update(requestDto);
 
         return new CarUpdateResponseDto(car);
@@ -62,10 +64,20 @@ public class CarService {
      */
     @Transactional
     public CarDeleteResponseDto delete(Long carId) {
-        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(cardId: " + carId + ")"));
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NotFoundCarException("존재하지 않는 차량입니다.(carId: " + carId + ")"));
+        validateCarReleased(car);
         car.delete();
 
         return new CarDeleteResponseDto(car);
+    }
+
+    /**
+     * 차량 출고 여부 체크
+     */
+    private void validateCarReleased(Car car) {
+        if (car.getStatus() == CarStatus.RELEASE) {
+            throw new AlreadyReleasedCarException("출고중인 차량은 삭제할 수 없습니다. 출고 취소 후 삭제해 주세요.");
+        }
     }
 
     /**

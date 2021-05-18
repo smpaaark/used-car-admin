@@ -2,7 +2,7 @@ package com.usedcar.admin.web;
 
 import com.usedcar.admin.service.car.CarDeleteResponseDto;
 import com.usedcar.admin.service.car.CarService;
-import com.usedcar.admin.web.dto.CarUpdateRequestDto;
+import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
 import com.usedcar.admin.web.dto.CommonResponseDto;
 import com.usedcar.admin.web.dto.car.*;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,6 @@ public class CarApiController extends ExceptionController {
     @GetMapping("/api/car/{carId}")
     public ResponseEntity findCar(@PathVariable("carId") Long carId) {
         log.info("\n\n=== findCar start ===\n* carId: " + carId + "\n");
-
         CarFindResponseDto responseDto = carService.findById(carId);
         log.info("\n\n=== findCar end ===\n* findCar: " + responseDto + "\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));

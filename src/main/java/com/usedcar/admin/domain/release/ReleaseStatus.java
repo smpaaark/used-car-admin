@@ -2,6 +2,6 @@ package com.usedcar.admin.domain.release;
 
 public enum ReleaseStatus {
 
-    COMPLETE, CANCEL;
+    READY, COMPLETE, CANCEL;
 
 }

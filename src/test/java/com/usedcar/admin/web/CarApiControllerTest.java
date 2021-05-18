@@ -5,7 +5,7 @@ import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.domain.car.Category;
-import com.usedcar.admin.web.dto.CarUpdateRequestDto;
+import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
 import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
 import org.junit.After;
 import org.junit.Test;
@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,6 +55,7 @@ public class CarApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
+        String staff = "박성민";
         CarSaveRequestDto requestDto = CarSaveRequestDto.builder()
                 .carNumber(carNumber)
                 .vin(vin)
@@ -61,6 +63,7 @@ public class CarApiControllerTest {
                 .model(model)
                 .color(color)
                 .productionYear(productionYear)
+                .staff(staff)
                 .build();
 
         // when
@@ -86,6 +89,7 @@ public class CarApiControllerTest {
         assertThat(car.getProductionYear()).isEqualTo(productionYear);
         assertThat(car.getPurchaseDate()).isNotNull();
         assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
+        assertThat(car.getStaff()).isEqualTo(staff);
     }
     
     @Test
@@ -116,6 +120,7 @@ public class CarApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
+        String staff = "박성민";
         CarSaveRequestDto requestDto = CarSaveRequestDto.builder()
                 .carNumber(carNumber)
                 .vin(vin)
@@ -123,6 +128,7 @@ public class CarApiControllerTest {
                 .model(model)
                 .color(color)
                 .productionYear(productionYear)
+                .staff(staff)
                 .build();
 
         // when
@@ -150,11 +156,12 @@ public class CarApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
+        String staff = "박성민";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
-        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate));
-        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate));
-        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate));
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
 
         // when
         mvc.perform(get("/api/cars")
@@ -191,9 +198,10 @@ public class CarApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
+        String staff = "박성민";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
-        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff)).getId();
 
         // when
         mvc.perform(get("/api/car/" + carId)
@@ -215,6 +223,7 @@ public class CarApiControllerTest {
         assertThat(car.getModel()).isEqualTo(model);
         assertThat(car.getColor()).isEqualTo(color);
         assertThat(car.getProductionYear()).isEqualTo(productionYear);
+        assertThat(car.getStaff()).isEqualTo(staff);
         assertThat(car.getPurchaseDate()).isNotNull();
         assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
     }
@@ -243,9 +252,10 @@ public class CarApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
+        String staff = "박성민";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
-        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff)).getId();
 
         Category category2 = Category.FOREIGN;
         String model2 = "G70";
@@ -271,6 +281,9 @@ public class CarApiControllerTest {
 
         // then
         List<Car> list = carRepository.findAll();
+        assertThat(list.get(0).getCarNumber()).isEqualTo(carNumber);
+        assertThat(list.get(0).getVin()).isEqualTo(vin);
+        assertThat(list.get(0).getStaff()).isEqualTo(staff);
         assertThat(list.get(0).getCategory()).isEqualTo(category2);
         assertThat(list.get(0).getModel()).isEqualTo(model2);
         assertThat(list.get(0).getColor()).isEqualTo(color2);
@@ -304,8 +317,9 @@ public class CarApiControllerTest {
         String color = "검정";
         String productionYear = "2018";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        String staff = "박성민";
 
-        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate)).getId();
+        Long carId = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff)).getId();
 
         // when
         mvc.perform(delete("/api/car/" + carId)
@@ -323,22 +337,10 @@ public class CarApiControllerTest {
         assertThat(car.getStatus()).isEqualTo(CarStatus.DELETE);
     }
 
-    private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate) {
-        return Car.builder()
-                .carNumber(carNumber)
-                .vin(vin)
-                .category(category)
-                .model(model)
-                .color(color)
-                .productionYear(productionYear)
-                .purchaseDate(purchaseDate)
-                .build();
-    }
-    
     @Test
     public void 차량_삭제_존재하지_않는_차량() throws Exception {
         // given
-        
+
         // when
         mvc.perform(delete("/api/car/0")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -348,6 +350,46 @@ public class CarApiControllerTest {
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+    
+    @Test
+    @Transactional
+    public void 차량_삭제_이미_출고중인_차량() throws Exception {
+        // given
+        String carNumber = "04구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        String staff = "박성민";
+
+        Car car = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff));
+        car.release(LocalDateTime.now());
+
+        // when
+        mvc.perform(delete("/api/car/" + car.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate, String staff) {
+        return Car.builder()
+                .carNumber(carNumber)
+                .vin(vin)
+                .category(category)
+                .model(model)
+                .color(color)
+                .productionYear(productionYear)
+                .purchaseDate(purchaseDate)
+                .staff(staff)
+                .build();
     }
 
 }

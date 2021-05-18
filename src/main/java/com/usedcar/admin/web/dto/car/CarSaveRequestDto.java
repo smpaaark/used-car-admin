@@ -7,11 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -30,15 +27,18 @@ public class CarSaveRequestDto {
     private String color;
     @NotEmpty
     private String productionYear;
+    @NotEmpty
+    private String staff;
 
     @Builder
-    public CarSaveRequestDto(String carNumber, String vin, Category category, String model, String color, String productionYear) {
+    public CarSaveRequestDto(String carNumber, String vin, Category category, String model, String color, String productionYear, String staff) {
         this.carNumber = carNumber;
         this.vin = vin;
         this.category = category;
         this.model = model;
         this.color = color;
         this.productionYear = productionYear;
+        this.staff = staff;
     }
 
     public Car toEntity() {
@@ -49,6 +49,7 @@ public class CarSaveRequestDto {
                 .model(model)
                 .color(color)
                 .productionYear(productionYear)
+                .staff(staff)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
 
@@ -12,5 +13,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     @Query("SELECT c FROM Car c WHERE c.status != 'DELETE' ORDER BY c.id DESC")
     public List<Car> findAllDesc();
+
+    @Query("SELECT c FROM Car c WHERE c.id = :carId AND c.status != 'DELETE'")
+    public Optional<Car> findCarStatus(Long carId);
 
 }
