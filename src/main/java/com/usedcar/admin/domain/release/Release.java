@@ -59,6 +59,10 @@ public class Release extends BaseTimeEntity {
     public void create(Car car) {
         car.release(this.releaseDate);
         this.car = car;
+
+        for (Payment payment : payments) {
+            payment.create(this);
+        }
     }
 
     public void cancel() {

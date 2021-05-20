@@ -41,4 +41,8 @@ public class Payment extends BaseTimeEntity {
         this.release = release;
     }
 
+    public void create(Release release) {
+        this.release = release;
+    }
+
 }
