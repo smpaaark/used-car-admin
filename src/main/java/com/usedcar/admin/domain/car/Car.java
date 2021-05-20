@@ -65,4 +65,8 @@ public class Car extends BaseTimeEntity {
         this.releaseDate = releaseDate;
     }
 
+    public void cancelRelease() {
+        this.status = CarStatus.NORMAL;
+    }
+
 }

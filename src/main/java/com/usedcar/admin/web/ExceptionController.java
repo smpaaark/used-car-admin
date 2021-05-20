@@ -1,9 +1,6 @@
 package com.usedcar.admin.web;
 
-import com.usedcar.admin.exception.AlreadyReleasedCarException;
-import com.usedcar.admin.exception.DuplicatedCarNumberException;
-import com.usedcar.admin.exception.NotFoundCarException;
-import com.usedcar.admin.exception.NotFoundReleaseException;
+import com.usedcar.admin.exception.*;
 import com.usedcar.admin.web.dto.CommonResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,6 +39,12 @@ public class ExceptionController {
     @ExceptionHandler(NotFoundReleaseException.class)
     public ResponseEntity notFoundReleaseHandler(NotFoundReleaseException e) {
         log.info("\n\n=== notFoundReleaseHandler ===\n* message: " + e.getMessage());
+        return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
+    }
+
+    @ExceptionHandler(AlreadyCanceledReleaseException.class)
+    public ResponseEntity alreadyCanceledReleaseExceptionHandler(AlreadyCanceledReleaseException e) {
+        log.info("\n\n=== alreadyCanceledReleaseExceptionHandler ===\n* message: " + e.getMessage());
         return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
     }
 

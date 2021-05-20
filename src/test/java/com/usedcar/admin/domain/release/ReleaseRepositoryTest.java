@@ -63,6 +63,7 @@ public class ReleaseRepositoryTest {
         ReleaseStatus status = ReleaseStatus.READY;
 
         Car car = carRepository.findById(1L).get();
+        car.release(LocalDateTime.now());
 
         // when
         releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car));

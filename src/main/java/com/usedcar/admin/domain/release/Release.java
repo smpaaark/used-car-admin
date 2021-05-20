@@ -2,12 +2,16 @@ package com.usedcar.admin.domain.release;
 
 import com.usedcar.admin.domain.BaseTimeEntity;
 import com.usedcar.admin.domain.car.Car;
+import com.usedcar.admin.domain.payment.Payment;
+import com.usedcar.admin.web.dto.release.ReleaseSaveRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -36,18 +40,33 @@ public class Release extends BaseTimeEntity {
     @JoinColumn(name = "car_id")
     private Car car;
 
+    @OneToMany(mappedBy = "release", cascade = ALL)
+    private List<Payment> payments = new ArrayList<>();
+
     @Builder
-    public Release(String staff, String salesStaff, int price, int deposit, Car car, ReleaseStatus status) {
+    public Release(String staff, String salesStaff, int price, int deposit, ReleaseStatus status, Car car, List<Payment> payments) {
         this.staff = staff;
         this.salesStaff = salesStaff;
         this.price = price;
         this.deposit = deposit;
         this.car = car;
         this.status = status;
+        for (Payment payment : payments) {
+            this.payments.add(payment);
+        }
     }
 
-    public void updateCar(Car car) {
+    public void create(Car car) {
+        car.release(this.releaseDate);
         this.car = car;
     }
 
+    public void cancel() {
+        this.status = ReleaseStatus.CANCEL;
+        this.car.cancelRelease();
+    }
+
+    public void complete() {
+        this.status = ReleaseStatus.COMPLETE;
+    }
 }

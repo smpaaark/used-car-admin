@@ -2,10 +2,7 @@ package com.usedcar.admin.web;
 
 import com.usedcar.admin.service.release.ReleaseService;
 import com.usedcar.admin.web.dto.CommonResponseDto;
-import com.usedcar.admin.web.dto.release.ReleaseFindAllResponseDto;
-import com.usedcar.admin.web.dto.release.ReleaseFindResponseDto;
-import com.usedcar.admin.web.dto.release.ReleaseSaveRequestDto;
-import com.usedcar.admin.web.dto.release.ReleaseSaveResponseDto;
+import com.usedcar.admin.web.dto.release.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,6 +45,18 @@ public class ReleaseApiController extends ExceptionController {
         log.info("\n\n=== findRelease start ===\n* releaseId: " + releaseId + "\n");
         ReleaseFindResponseDto responseDto = releaseService.findById(releaseId);
         log.info("\n\n=== findRelease end ===\n* findRelease: " + responseDto + "\n");
+        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));
+    }
+
+    @PutMapping("/api/release/{releaseId}")
+    public ResponseEntity updateRelease(@PathVariable("releaseId") Long releaseId, @RequestBody @Valid ReleaseUpdateRequestDto requestDto, Errors errors) {
+        log.info("\n\n=== updateRelease start ===\n* releaseId: " + releaseId + "\n* requestDto: " + requestDto);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), "필수값 오류", errors));
+        }
+
+        ReleaseUpdateResponseDto responseDto = releaseService.update(releaseId, requestDto);
+        log.info("\n\n=== updateRelease end ===\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));
     }
 

@@ -5,13 +5,12 @@ import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseRepository;
+import com.usedcar.admin.domain.release.ReleaseStatus;
+import com.usedcar.admin.exception.AlreadyCanceledReleaseException;
 import com.usedcar.admin.exception.AlreadyReleasedCarException;
 import com.usedcar.admin.exception.NotFoundCarException;
 import com.usedcar.admin.exception.NotFoundReleaseException;
-import com.usedcar.admin.web.dto.release.ReleaseFindAllResponseDto;
-import com.usedcar.admin.web.dto.release.ReleaseFindResponseDto;
-import com.usedcar.admin.web.dto.release.ReleaseSaveRequestDto;
-import com.usedcar.admin.web.dto.release.ReleaseSaveResponseDto;
+import com.usedcar.admin.web.dto.release.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +36,7 @@ public class ReleaseService {
         validateCarSave(car);
 
         Release release = requestDto.toEntity();
-        car.release(release.getReleaseDate());
-        release.updateCar(car);
+        release.create(car);
 
         return new ReleaseSaveResponseDto(releaseRepository.save(release));
     }
@@ -62,6 +60,32 @@ public class ReleaseService {
     }
 
     /**
+     * 출고 상태 변경
+     */
+    public ReleaseUpdateResponseDto update(Long releaseId, ReleaseUpdateRequestDto requestDto) {
+        Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundReleaseException("존재하지 않는 출고 번호입니다.(releaseId: " + releaseId + ")"));
+        validateReleaseStatus(release);
+        
+        ReleaseStatus requestStatus = requestDto.getStatus();
+        if (requestStatus == ReleaseStatus.CANCEL) {
+            release.cancel();
+        } else if (requestStatus == ReleaseStatus.COMPLETE) {
+            release.complete();
+        }
+
+        return new ReleaseUpdateResponseDto(release);
+    }
+
+    /**
+     * 출고 상태 체크
+     */
+    private void validateReleaseStatus(Release release) {
+        if (release.getStatus() == ReleaseStatus.CANCEL) {
+            throw new AlreadyCanceledReleaseException("이미 취소 처리되어 출고 상태를 변경할 수 없습니다.(releaseId: " + release.getId() + ")");
+        }
+    }
+
+    /**
      * 출고 차량 중복 체크
      */
     private void validateCarSave(Car car) {
@@ -69,4 +93,5 @@ public class ReleaseService {
             throw new AlreadyReleasedCarException("이미 출고된 차량입니다.(carId: " + car.getId() + ")");
         }
     }
+    
 }

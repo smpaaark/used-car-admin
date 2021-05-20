@@ -55,7 +55,7 @@ public class CarApiController extends ExceptionController {
         log.info("\n\n=== updateCar start ===\n* carId: " + carId + "\n* requestDto: " + requestDto);
         CarUpdateResponseDto responseDto = carService.update(carId, requestDto);
         log.info("\n\n=== updateCar end ===\n");
-        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto.getId()));
+        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));
     }
 
     @DeleteMapping("/api/car/{carId}")
