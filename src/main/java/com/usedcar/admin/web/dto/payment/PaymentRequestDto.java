@@ -7,14 +7,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor
 @ToString
 public class PaymentRequestDto {
 
+    @NotNull
     private PaymentType paymentType;
+
+    @Min(0)
     private int pay_amount;
+
+    @Min(0)
     private int instalment;
+
     private String capital;
 
     @Builder

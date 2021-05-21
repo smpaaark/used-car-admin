@@ -1,11 +1,15 @@
 package com.usedcar.admin.web.dto.release;
 
-import com.usedcar.admin.domain.car.Car;
+import com.usedcar.admin.domain.payment.Payment;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseStatus;
+import com.usedcar.admin.web.dto.car.CarFindResponseDto;
+import com.usedcar.admin.web.dto.payment.PaymentFindAllResponseDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class ReleaseFindResponseDto {
@@ -17,7 +21,8 @@ public class ReleaseFindResponseDto {
     private int deposit;
     private ReleaseStatus status;
     private LocalDateTime releaseDate;
-    private Car car;
+    private CarFindResponseDto car;
+    private List<PaymentFindResponseDto> payments;
 
     public ReleaseFindResponseDto(Release entity) {
         this.id = entity.getId();
@@ -27,7 +32,11 @@ public class ReleaseFindResponseDto {
         this.deposit = entity.getDeposit();
         this.status = entity.getStatus();
         this.releaseDate = entity.getReleaseDate();
-        this.car = entity.getCar();
+        this.car = new CarFindResponseDto(entity.getCar());
+        this.payments = new ArrayList<>();
+        for (Payment payment : entity.getPayments()) {
+            this.payments.add(new PaymentFindResponseDto(payment));
+        }
     }
 
 }

@@ -1,0 +1,20 @@
+{{>layout/header}}
+
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <div class="jumbotron">
+        <h1>중고차 관리 프로그램</h1>
+        <p class="lead">차량 매입 기능</p>
+        <p>
+            <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>
+            <a class="btn btn-lg btn-dark" href="/items">차량 목록</a>
+        </p>
+        <p class="lead">차량 출고 기능</p>
+        <p>
+            <a class="btn btn-lg btn-info" href="/order">차량 출고</a>
+            <a class="btn btn-lg btn-info" href="/orders">출고 내역</a>
+        </p>
+    </div>
+
+{{>layout/footer}}

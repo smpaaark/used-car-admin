@@ -1,0 +1,52 @@
+{{>layout/header}}
+
+<style>
+    .fieldError {
+        border-color: #bd2130;
+    }
+</style>
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <form>
+        <h1>차량 매입</h1>
+        <div class="form-group">
+            <label>차량 번호</label>
+            <input type="text" class="form-control" placeholder="차량 번호를 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>차대 번호</label>
+            <input type="text" class="form-control" placeholder="차대 번호를 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>국산/외제</label>
+            <select class="form-control">
+                <option>국산</option>
+                <option>외제</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>차종</label>
+            <input type="text" class="form-control" placeholder="차종을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>색상</label>
+            <input type="text" class="form-control" placeholder="색상을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>연식</label>
+            <select class="form-control">
+                {{#years}}
+                    <option>{{value}}</option>
+                {{/years}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>담당 직원</label>
+            <input type="text" class="form-control" placeholder="담당 직원 이름을 입력하세요">
+        </div>
+        <button type="submit" class="btn btn-primary">매입 하기</button>
+    </form>
+    <br/>
+
+{{>layout/footer}}

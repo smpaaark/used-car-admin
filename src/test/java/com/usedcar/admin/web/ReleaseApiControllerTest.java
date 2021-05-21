@@ -6,6 +6,7 @@ import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.domain.car.Category;
 import com.usedcar.admin.domain.payment.Payment;
+import com.usedcar.admin.domain.payment.PaymentRepository;
 import com.usedcar.admin.domain.payment.PaymentType;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseRepository;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +48,9 @@ public class ReleaseApiControllerTest {
     private CarRepository carRepository;
 
     @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
     private MockMvc mvc;
 
     @Autowired
@@ -55,8 +58,10 @@ public class ReleaseApiControllerTest {
 
     @After
     public void clean() {
+        paymentRepository.deleteAll();
         releaseRepository.deleteAll();
         carRepository.deleteAll();
+
     }
 
     @Before
@@ -147,8 +152,12 @@ public class ReleaseApiControllerTest {
     @Test
     public void 차량_출고_필수값_오류() throws Exception {
         // given
-        ReleaseSaveRequestDto requestDto = ReleaseSaveRequestDto.builder().build();
-        
+        List<PaymentRequestDto> paymentRequestDtos = new ArrayList<>();
+        paymentRequestDtos.add(PaymentRequestDto.builder().build());
+        ReleaseSaveRequestDto requestDto = ReleaseSaveRequestDto.builder()
+                .payments(paymentRequestDtos)
+                .build();
+
         // when
         mvc.perform(post("/api/release/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -170,6 +179,23 @@ public class ReleaseApiControllerTest {
         int deposit = 15000000;
         Long carId = 0L;
         ReleaseStatus status = ReleaseStatus.READY;
+
+        List<PaymentRequestDto> paymentRequestDtos = new ArrayList<>();
+        PaymentRequestDto cashRequestDto = PaymentRequestDto.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        paymentRequestDtos.add(cashRequestDto);
+
+        PaymentRequestDto cardRequestDto = PaymentRequestDto.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        paymentRequestDtos.add(cardRequestDto);
+
         ReleaseSaveRequestDto requestDto = ReleaseSaveRequestDto.builder()
                 .staff(staff)
                 .salesStaff(salesStaff)
@@ -177,6 +203,7 @@ public class ReleaseApiControllerTest {
                 .deposit(deposit)
                 .carId(carId)
                 .status(status)
+                .payments(paymentRequestDtos)
                 .build();
 
         // when
@@ -204,6 +231,23 @@ public class ReleaseApiControllerTest {
         int deposit = 15000000;
         Long carId = 1L;
         ReleaseStatus status = ReleaseStatus.READY;
+
+        List<PaymentRequestDto> paymentRequestDtos = new ArrayList<>();
+        PaymentRequestDto cashRequestDto = PaymentRequestDto.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        paymentRequestDtos.add(cashRequestDto);
+
+        PaymentRequestDto cardRequestDto = PaymentRequestDto.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        paymentRequestDtos.add(cardRequestDto);
+
         ReleaseSaveRequestDto requestDto = ReleaseSaveRequestDto.builder()
                 .staff(staff)
                 .salesStaff(salesStaff)
@@ -211,6 +255,7 @@ public class ReleaseApiControllerTest {
                 .deposit(deposit)
                 .carId(carId)
                 .status(status)
+                .payments(paymentRequestDtos)
                 .build();
 
         // when
@@ -239,13 +284,63 @@ public class ReleaseApiControllerTest {
         Car car2 = carRepository.findById(2L).get();
         Car car3 = carRepository.findById(3L).get();
 
-        car1.release(LocalDateTime.now());
-        car2.release(LocalDateTime.now());
-        car3.release(LocalDateTime.now());
+        List<Payment> payments1 = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments1.add(cashPayment1);
 
-        releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car1));
-        releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car2));
-        releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car3));
+        Payment cardPayment1 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments1.add(cardPayment1);
+
+        List<Payment> payments2 = new ArrayList<>();
+        Payment cashPayment2 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments2.add(cashPayment2);
+
+        Payment cardPayment2 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments2.add(cardPayment2);
+
+        List<Payment> payments3 = new ArrayList<>();
+        Payment cashPayment3 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments3.add(cashPayment3);
+
+        Payment cardPayment3 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments3.add(cardPayment3);
+
+        Release release1 = getRelease(staff, salesStaff, price, deposit, status, car1, payments1);
+        Release release2 = getRelease(staff, salesStaff, price, deposit, status, car2, payments2);
+        Release release3 = getRelease(staff, salesStaff, price, deposit, status, car3, payments3);
+        release1.create(car1);
+        release2.create(car2);
+        release3.create(car3);
+        releaseRepository.save(release1);
+        releaseRepository.save(release2);
+        releaseRepository.save(release3);
         
         // when
         mvc.perform(get("/api/releaseList")
@@ -269,9 +364,25 @@ public class ReleaseApiControllerTest {
         ReleaseStatus status = ReleaseStatus.READY;
 
         Car car = carRepository.findById(1L).get();
-        car.release(LocalDateTime.now());
 
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car));
+        List<Payment> payments = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments.add(cashPayment1);
+
+        Payment cardPayment = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments.add(cardPayment);
+
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        release.create(car);
 
         // when
         mvc.perform(get("/api/release/" + release.getId())
@@ -312,8 +423,25 @@ public class ReleaseApiControllerTest {
         ReleaseStatus status = ReleaseStatus.READY;
 
         Car car = carRepository.findById(1L).get();
-        car.release(LocalDateTime.now());
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car));
+
+        List<Payment> payments = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments.add(cashPayment1);
+
+        Payment cardPayment = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments.add(cardPayment);
+
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        release.create(car);
 
         ReleaseUpdateRequestDto requestDto = ReleaseUpdateRequestDto.builder()
                 .status(ReleaseStatus.CANCEL)
@@ -336,7 +464,7 @@ public class ReleaseApiControllerTest {
         assertThat(result.getStatus()).isEqualTo(ReleaseStatus.CANCEL);
         assertThat(result.getCar().getStatus()).isEqualTo(CarStatus.NORMAL);
     }
-    
+
     @Test
     @Transactional
     public void 출고_완료_처리() throws Exception {
@@ -348,8 +476,25 @@ public class ReleaseApiControllerTest {
         ReleaseStatus status = ReleaseStatus.READY;
 
         Car car = carRepository.findById(1L).get();
-        car.release(LocalDateTime.now());
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car));
+
+        List<Payment> payments = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments.add(cashPayment1);
+
+        Payment cardPayment = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments.add(cardPayment);
+
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        release.create(car);
 
         ReleaseUpdateRequestDto requestDto = ReleaseUpdateRequestDto.builder()
                 .status(ReleaseStatus.COMPLETE)
@@ -365,14 +510,14 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data.id").value(1L));
-        
+
         // then
         List<Release> list = releaseRepository.findAll();
         Release result = list.get(0);
         assertThat(result.getStatus()).isEqualTo(ReleaseStatus.COMPLETE);
         assertThat(result.getCar().getStatus()).isEqualTo(CarStatus.RELEASE);
     }
-    
+
     @Test
     public void 출고_상태_변경_필수값_오류() throws Exception {
         // given
@@ -389,7 +534,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").exists());
     }
-    
+
     @Test
     public void 출고_상태_변경_존재하지_않는_출고번호() throws Exception {
         // given
@@ -408,7 +553,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-    
+
     @Test
     @Transactional
     public void 출고_상태_변경_이미_취소된_상태() throws Exception {
@@ -420,8 +565,25 @@ public class ReleaseApiControllerTest {
         ReleaseStatus status = ReleaseStatus.READY;
 
         Car car = carRepository.findById(1L).get();
-        car.release(LocalDateTime.now());
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car));
+
+        List<Payment> payments = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(deposit)
+                .instalment(0)
+                .build();
+        payments.add(cashPayment1);
+
+        Payment cardPayment = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - deposit)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments.add(cardPayment);
+
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        release.create(car);
         release.cancel();
 
         ReleaseUpdateRequestDto requestDto = ReleaseUpdateRequestDto.builder()
@@ -440,7 +602,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    private Release getRelease(String staff, String salesStaff, int price, int deposit, ReleaseStatus status, Car car) {
+    private Release getRelease(String staff, String salesStaff, int price, int deposit, ReleaseStatus status, Car car, List<Payment> payments) {
         return Release.builder()
                 .staff(staff)
                 .salesStaff(salesStaff)
@@ -448,6 +610,7 @@ public class ReleaseApiControllerTest {
                 .deposit(deposit)
                 .status(status)
                 .car(car)
+                .payments(payments)
                 .build();
     }
 

@@ -14,6 +14,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -48,7 +49,8 @@ public class ReleaseSaveRequestDto {
     private ReleaseStatus status;
 
     @NotEmpty
-    private List<PaymentRequestDto> payments = new ArrayList<>();
+    @Valid
+    private List<PaymentRequestDto> payments;
 
     @Builder
     public ReleaseSaveRequestDto(String staff, String salesStaff, int price, int deposit, Long carId, ReleaseStatus status, List<PaymentRequestDto> payments) {
@@ -58,9 +60,7 @@ public class ReleaseSaveRequestDto {
         this.deposit = deposit;
         this.carId = carId;
         this.status = status;
-        for (PaymentRequestDto requestDto : payments) {
-            this.payments.add(requestDto);
-        }
+        this.payments = payments;
     }
 
     public Release toEntity() {
