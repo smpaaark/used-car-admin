@@ -18,6 +18,14 @@ button {
     margin-top: 16px;
 }
 
+.cancel-button {
+    margin-top: 16px;
+}
+
 h1 {
     margin-top: 16px;
+}
+
+.fieldError {
+    border-color: #FF0000;
 }

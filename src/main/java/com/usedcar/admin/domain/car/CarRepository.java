@@ -17,4 +17,6 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("SELECT c FROM Car c WHERE c.id = :carId AND c.status != 'DELETE'")
     public Optional<Car> findCarStatus(Long carId);
 
+    @Query("SELECT c FROM Car c WHERE c.status = 'NORMAL' ORDER BY c.id DESC")
+    public List<Car> findNormal();
 }

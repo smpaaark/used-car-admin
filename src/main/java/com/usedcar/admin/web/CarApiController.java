@@ -42,6 +42,14 @@ public class CarApiController extends ExceptionController {
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDtos));
     }
 
+    @GetMapping("/api/cars/normal")
+    public ResponseEntity findCarsNormal() {
+        log.info("\n\n=== findCarsNormal start ===");
+        List<CarFindAllResponseDto> responseDtos = carService.findNormal();
+        log.info("\n\n=== findCarsNormal end ===\n* carsCount: " + responseDtos.size() + "\n");
+        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDtos));
+    }
+
     @GetMapping("/api/car/{carId}")
     public ResponseEntity findCar(@PathVariable("carId") Long carId) {
         log.info("\n\n=== findCar start ===\n* carId: " + carId + "\n");
@@ -53,6 +61,9 @@ public class CarApiController extends ExceptionController {
     @PutMapping("/api/car/{carId}")
     public ResponseEntity updateCar(@PathVariable("carId") Long carId, @RequestBody @Valid CarUpdateRequestDto requestDto, Errors errors) {
         log.info("\n\n=== updateCar start ===\n* carId: " + carId + "\n* requestDto: " + requestDto);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), "필수값 오류", errors));
+        }
         CarUpdateResponseDto responseDto = carService.update(carId, requestDto);
         log.info("\n\n=== updateCar end ===\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));

@@ -53,7 +53,7 @@ public class Car extends BaseTimeEntity {
         this.model = requestDto.getModel();
         this.color = requestDto.getColor();
         this.productionYear = requestDto.getProductionYear();
-
+        this.staff = requestDto.getStaff();
     }
 
     public void delete() {

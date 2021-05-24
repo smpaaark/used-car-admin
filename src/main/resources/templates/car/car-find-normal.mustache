@@ -1,0 +1,33 @@
+{{>layout/header}}
+
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <h1>출고할 차량 선택</h1>
+    <div>
+        <table class="table table-striped">
+            <thead> <tr>
+                <th>#</th>
+                <th>차종</th>
+                <th>색상</th>
+                <th>연식</th>
+                <th>담당 직원</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#cars}}
+                <tr onClick="location.href='/car/find/{{id}}'">
+                        <td>{{id}}</td>
+                        <td><a href="/car/find/{{id}}">{{model}}</a></td>
+                        <td>{{color}}</td>
+                        <td>{{productionYear}}</td>
+                        <td>{{staff}}</td>
+                    <td><a class="btn btn-success" href="/release/save/{{id}}">출고</a></td>
+                </tr>
+            {{/cars}}
+            </tbody>
+        </table>
+    </div>
+
+{{>layout/footer}}

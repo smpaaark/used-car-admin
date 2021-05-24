@@ -72,6 +72,15 @@ public class CarService {
     }
 
     /**
+     * 출고 가능한 차량 목록 조회
+     */
+    public List<CarFindAllResponseDto> findNormal() {
+        List<Car> cars = carRepository.findNormal();
+
+        return cars.stream().map(CarFindAllResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
      * 차량 출고 여부 체크
      */
     private void validateCarReleased(Car car) {

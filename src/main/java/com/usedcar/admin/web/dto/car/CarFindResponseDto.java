@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @ToString
@@ -18,7 +19,8 @@ public class CarFindResponseDto {
     private String model;
     private String color;
     private String productionYear;
-    private LocalDateTime purchaseDate;
+    private String staff;
+    private String purchaseDate;
 
     public CarFindResponseDto(Car entity) {
         this.id = entity.getId();
@@ -28,7 +30,8 @@ public class CarFindResponseDto {
         this.model = entity.getModel();
         this.color = entity.getColor();
         this.productionYear = entity.getProductionYear();
-        this.purchaseDate = entity.getPurchaseDate();
+        this.staff = entity.getStaff();
+        this.purchaseDate = entity.getPurchaseDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
 }
