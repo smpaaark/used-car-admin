@@ -1,6 +1,5 @@
 package com.usedcar.admin.web.dto.release;
 
-import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.payment.Payment;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseStatus;
@@ -10,20 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @NoArgsConstructor

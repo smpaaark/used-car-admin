@@ -90,6 +90,7 @@ public class CarApiControllerTest {
         assertThat(car.getPurchaseDate()).isNotNull();
         assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
         assertThat(car.getStaff()).isEqualTo(staff);
+        assertThat(car.getReleaseDate()).isNull();
     }
     
     @Test
@@ -121,6 +122,9 @@ public class CarApiControllerTest {
         String color = "검정";
         String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff));
+
         CarSaveRequestDto requestDto = CarSaveRequestDto.builder()
                 .carNumber(carNumber)
                 .vin(vin)
@@ -131,10 +135,6 @@ public class CarApiControllerTest {
                 .staff(staff)
                 .build();
 
-        // when
-        mvc.perform(post("/api/car")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)));
         mvc.perform(post("/api/car")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
@@ -212,20 +212,6 @@ public class CarApiControllerTest {
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").isNotEmpty());
-
-        // then
-        List<Car> list = carRepository.findAll();
-        Car car = list.get(0);
-        assertThat(car.getId()).isGreaterThan(0L);
-        assertThat(car.getCarNumber()).isEqualTo(carNumber);
-        assertThat(car.getVin()).isEqualTo(vin);
-        assertThat(car.getCategory()).isEqualTo(category);
-        assertThat(car.getModel()).isEqualTo(model);
-        assertThat(car.getColor()).isEqualTo(color);
-        assertThat(car.getProductionYear()).isEqualTo(productionYear);
-        assertThat(car.getStaff()).isEqualTo(staff);
-        assertThat(car.getPurchaseDate()).isNotNull();
-        assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
     }
 
     @Test

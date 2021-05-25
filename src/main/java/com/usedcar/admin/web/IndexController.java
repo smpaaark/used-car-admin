@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class IndexController {
+public class IndexController extends ErrorController {
 
     private final CarService carService;
 
@@ -90,6 +92,18 @@ public class IndexController {
         log.info("\n\n=== carFindNormal end ===");
 
         return "/car/car-find-normal";
+    }
+
+    @GetMapping("/release")
+    public String release(Model model, @RequestParam Long carId, @RequestParam String carNumber, @RequestParam String carModel, @RequestParam String color) {
+        log.info("\n\n=== release start ===");
+        model.addAttribute("carId", carId);
+        model.addAttribute("carNumber", carNumber);
+        model.addAttribute("model", carModel);
+        model.addAttribute("color", color);
+
+        log.info("\n\n=== release end ===");
+        return "/release/release";
     }
 
 }

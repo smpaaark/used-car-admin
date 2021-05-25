@@ -1,0 +1,43 @@
+{{>layout/header}}
+
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <form>
+        <h1>🚘차량 출고</h1>
+        <input type="hidden" id="carId" value="{{carId}}"/>
+        <div class="form-group">
+            <label>차량 번호</label>
+            <input type="text" class="form-control" id="carNumber" value="{{carNumber}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>차종</label>
+            <input type="text" class="form-control" id="model" value="{{model}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>색상</label>
+            <input type="text" class="form-control" id="color" value="{{color}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>담당 직원</label>
+            <input type="text" class="form-control" id="staff" placeholder="담당 직원 이름을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>판매 직원</label>
+            <input type="text" class="form-control" id="salesStaff" placeholder="판매 직원 이름을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label>판매 가격</label>
+            <input type="text" class="form-control" id="price" placeholder="판매 가격을 입력하세요" onkeyup="numberWithCommas('price')">
+        </div>
+        <div class="form-group">
+            <label>계약금</label>
+            <input type="text" class="form-control" id="deposit" placeholder="계약금을 입력하세요" onkeyup="numberWithCommas('deposit')">
+        </div>
+
+        <a href="/" role="button" class="btn btn-secondary cancel-button">취소</a>
+        <button type="button" class="btn btn-primary" id="btn-car-save">출고 하기</button>
+    </form>
+    <br/>
+
+{{>layout/footer}}

@@ -6,7 +6,6 @@
     <form>
         <h1>차량 정보</h1>
         <p>🛠 값 변경 후 [수정] 버튼을 누르면 차량 정보가 수정됩니다.<br>🚗 [출고] 버튼을 누르면 차량 출고 화면으로 이동합니다.</p>
-        <input type="hidden" id="id" value="{{car.id}}"/>
         <div class="form-group">
             <label>차량 번호</label>
             <input type="text" class="form-control" id="carNumber" value="{{car.carNumber}}" readonly>
@@ -18,6 +17,10 @@
         <div class="form-group">
             <label>매입 일자</label>
             <input type="text" class="form-control" id="purchaseDate" value="{{car.purchaseDate}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>출고 상태</label>
+            <input type="text" class="form-control" id="status" value="{{car.status}}" readonly>
         </div>
         <div class="form-group">
             <label>국산/외제</label>
@@ -47,10 +50,17 @@
             <label>담당 직원</label>
             <input type="text" class="form-control" id="staff" value="{{car.staff}}" >
         </div>
+    </form>
+    <form action="/release" method="get">
+        <input type="hidden" id="id" name="carId" value="{{car.id}}"/>
+        <input type="hidden" name="carNumber" value="{{car.carNumber}}"/>
+        <input type="hidden" name="carModel" value="{{car.model}}"/>
+        <input type="hidden" name="color" value="{{car.color}}"/>
         <a href="/car/findAll" role="button" class="btn btn-secondary cancel-button">취소</a>
         <button type="button" class="btn btn-primary" id="btn-car-update">수정</button>
-        <button type="button" class="btn btn-success" id="btn-car-release">출고</button>
+        <button type="submit" class="btn btn-success">출고</button>
         <button type="button" class="btn btn-danger" id="btn-car-delete">삭제</button>
     </form>
+
 
 {{>layout/footer}}

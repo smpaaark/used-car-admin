@@ -120,24 +120,34 @@ var main = {
             window.location.href = '/car/findAll';
         }).fail(function(error) {
             alert(error.responseJSON.message);
+            window.location.href = '/car/findAll';
         });
     },
 
     carDelete : function() {
-            var _this = this;
+        var _this = this;
 
-            $.ajax({
-                type: 'DELETE',
-                url: '/api/car/' + $('#id').val(),
-                dataType: 'json',
-                contentType:'application/json; charset=utf-8'
-            }).done(function() {
-                alert('차량이 삭제되었습니다.');
-                window.location.href = '/car/findAll';
-            }).fail(function(error) {
-                alert(error.responseJSON.message);
-            });
-        }
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/car/' + $('#id').val(),
+            dataType: 'json',
+            contentType:'application/json; charset=utf-8'
+        }).done(function() {
+            alert('차량이 삭제되었습니다.');
+            window.location.href = '/car/findAll';
+        }).fail(function(error) {
+            alert(error.responseJSON.message);
+            window.location.href = '/car/findAll';
+        });
+    }
 };
 
 main.init();
+
+
+function numberWithCommas(x) {
+    var xVal= $("#" + x).val();
+    xVal = xVal.replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
+    xVal = xVal.replace(/,/g,'');          // ,값 공백처리
+    $("#" + x).val(xVal.replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 정규식을 이용해서 3자리 마다 , 추가
+}
