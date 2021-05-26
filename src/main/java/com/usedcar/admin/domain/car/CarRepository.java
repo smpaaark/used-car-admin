@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface CarRepository extends JpaRepository<Car, Long> {
+public interface CarRepository extends JpaRepository<Car, Long>, CarRepositoryCustom {
 
     @Query("SELECT count(c) FROM Car c WHERE c.carNumber = :carNumber AND c.status != 'DELETE'")
     public int countByCarNumber(String carNumber);

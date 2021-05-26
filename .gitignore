@@ -1,5 +1,6 @@
 .mvn
 .log
+generated
 
 HELP.md
 target/

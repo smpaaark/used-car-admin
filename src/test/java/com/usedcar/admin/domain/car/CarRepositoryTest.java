@@ -109,6 +109,28 @@ public class CarRepositoryTest {
         Car car = optionalCar.get();
         assertThat(car.getStatus()).isEqualTo(CarStatus.NORMAL);
     }
+    
+    @Test
+    public void QueryDsl_테스트() throws Exception {
+        // given
+        String carNumber = "04구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        String staff = "박성민";
+
+        Long id = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff)).getId();
+
+        // when
+        List<Car> cars = carRepository.findByCarNumber(carNumber);
+
+        // then
+        assertThat(cars.size()).isEqualTo(1);
+        assertThat(cars.get(0).getCarNumber()).isEqualTo(carNumber);
+    }
 
     private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate, String staff) {
         return Car.builder()
