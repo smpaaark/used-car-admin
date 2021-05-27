@@ -12,6 +12,10 @@ var main = {
         $('#btn-car-delete').on('click', function() {
             _this.carDelete();
         });
+
+        $('#btn-release').on('click', function() {
+            _this.carRelease();
+        });
     },
 
     changeCategory : function(category) {
@@ -138,6 +142,47 @@ var main = {
         }).fail(function(error) {
             alert(error.responseJSON.message);
             window.location.href = '/car/findAll';
+        });
+    },
+
+    carRelease : function() {
+        var _this = this;
+        var payments = [];
+        var cashPayment = {
+            paymentType: 'CASH',
+            pay_amount: $('#cash_pay_amount').val()
+        }
+
+        var cardPayment = {
+            paymentType: 'CARD',
+            pay_amount: $('#card_pay_amount').val(),
+            instalment: $('#instalment').val(),
+            capital: $('#capital').val()
+        }
+
+        payments.push(cashPayment);
+        payments.push(cardPayment);
+
+        var data = {
+            staff: $('#staff').val(),
+            salesStaff: $('#salesStaff').val(),
+            price: $('#price').val(),
+            carId: $('#carId').val(),
+            status: 'READY',
+            payments: payments
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/release',
+            dataType: 'json',
+            contentType:'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function() {
+            alert('차량이 출고되었습니다.');
+            window.location.href = '/release/findAll';
+        }).fail(function(error) {
+            alert(error.responseJSON.message);
         });
     }
 };

@@ -1,0 +1,33 @@
+{{>layout/header}}
+
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <h1>🧾차량 출고 목록</h1>
+    <div>
+        <table class="table table-striped">
+            <thead> <tr>
+                <th>#</th>
+                <th>차종</th>
+                <th>색상</th>
+                <th>차량 번호</th>
+                <th>출고 일자</th>
+                <th>출고 상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#releaseList}}
+                <tr onClick="">
+                        <td>{{id}}</td>
+                        <td><a href="">{{car.model}}</a></td>
+                        <td>{{car.color}}</td>
+                        <td>{{car.carNumber}}</td>
+                        <td>{{formattedReleaseDate}}</td>
+                        <td>{{status}}</td>
+                </tr>
+            {{/releaseList}}
+            </tbody>
+        </table>
+    </div>
+
+{{>layout/footer}}

@@ -30,9 +30,6 @@ public class ReleaseSaveRequestDto {
     @Min(0)
     private int price;
 
-    @Min(0)
-    private int deposit;
-
     @NotNull
     private Long carId;
 
@@ -44,11 +41,10 @@ public class ReleaseSaveRequestDto {
     private List<PaymentRequestDto> payments;
 
     @Builder
-    public ReleaseSaveRequestDto(String staff, String salesStaff, int price, int deposit, Long carId, ReleaseStatus status, List<PaymentRequestDto> payments) {
+    public ReleaseSaveRequestDto(String staff, String salesStaff, int price, Long carId, ReleaseStatus status, List<PaymentRequestDto> payments) {
         this.staff = staff;
         this.salesStaff = salesStaff;
         this.price = price;
-        this.deposit = deposit;
         this.carId = carId;
         this.status = status;
         this.payments = payments;
@@ -64,7 +60,6 @@ public class ReleaseSaveRequestDto {
                 .staff(staff)
                 .salesStaff(salesStaff)
                 .price(price)
-                .deposit(deposit)
                 .status(status)
                 .payments(payments)
                 .build();

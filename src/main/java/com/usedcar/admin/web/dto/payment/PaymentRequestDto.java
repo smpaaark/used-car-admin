@@ -21,7 +21,6 @@ public class PaymentRequestDto {
     @Min(0)
     private int pay_amount;
 
-    @Min(0)
     private int instalment;
 
     private String capital;

@@ -8,6 +8,7 @@ import com.usedcar.admin.web.dto.payment.PaymentFindAllResponseDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,9 @@ public class ReleaseFindAllResponseDto {
     private String staff;
     private String salesStaff;
     private int price;
-    private int deposit;
     private ReleaseStatus status;
     private LocalDateTime releaseDate;
+    private String formattedReleaseDate;
     private CarFindAllResponseDto car;
     private List<PaymentFindAllResponseDto> payments;
 
@@ -29,7 +30,6 @@ public class ReleaseFindAllResponseDto {
         this.staff = entity.getStaff();
         this.salesStaff = entity.getSalesStaff();
         this.price = entity.getPrice();
-        this.deposit = entity.getDeposit();
         this.status = entity.getStatus();
         this.releaseDate = entity.getReleaseDate();
         this.car = new CarFindAllResponseDto(entity.getCar());
@@ -37,6 +37,10 @@ public class ReleaseFindAllResponseDto {
         for (Payment payment : entity.getPayments()) {
             this.payments.add(new PaymentFindAllResponseDto(payment));
         }
+    }
+
+    public void formattingReleaseDate() {
+        this.formattedReleaseDate = this.releaseDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
 }

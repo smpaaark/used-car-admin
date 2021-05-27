@@ -93,8 +93,8 @@ public class CarService {
      * 차량 매입 중복 체크
      */
     private void validateDuplicateCar(CarSaveRequestDto requestDto) {
-        int count = carRepository.countByCarNumber(requestDto.getCarNumber());
-        if (count > 0) {
+        Long count = carRepository.countByCarNumber(requestDto.getCarNumber());
+        if (count > 0L) {
             throw new DuplicatedCarNumberException("이미 매입되어있는 차량입니다.(차량번호: " + requestDto.getCarNumber() + ")");
         }
     }

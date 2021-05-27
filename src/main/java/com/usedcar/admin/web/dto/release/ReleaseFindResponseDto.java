@@ -18,7 +18,6 @@ public class ReleaseFindResponseDto {
     private String staff;
     private String salesStaff;
     private int price;
-    private int deposit;
     private ReleaseStatus status;
     private LocalDateTime releaseDate;
     private CarFindResponseDto car;
@@ -29,7 +28,6 @@ public class ReleaseFindResponseDto {
         this.staff = entity.getStaff();
         this.salesStaff = entity.getSalesStaff();
         this.price = entity.getPrice();
-        this.deposit = entity.getDeposit();
         this.status = entity.getStatus();
         this.releaseDate = entity.getReleaseDate();
         this.car = new CarFindResponseDto(entity.getCar());

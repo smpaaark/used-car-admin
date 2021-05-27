@@ -2,16 +2,17 @@ package com.usedcar.admin.web;
 
 import com.usedcar.admin.domain.car.Category;
 import com.usedcar.admin.service.car.CarService;
+import com.usedcar.admin.service.release.ReleaseService;
 import com.usedcar.admin.web.dto.car.CarFindAllResponseDto;
 import com.usedcar.admin.web.dto.car.CarFindResponseDto;
 import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
+import com.usedcar.admin.web.dto.release.ReleaseFindAllResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 public class IndexController extends ErrorController {
 
     private final CarService carService;
+    private final ReleaseService releaseService;
 
     @GetMapping("/")
     public String index() {
@@ -104,6 +106,19 @@ public class IndexController extends ErrorController {
 
         log.info("\n\n=== release end ===");
         return "/release/release";
+    }
+
+    @GetMapping("/release/findAll")
+    public String releaseFindAll(Model model) {
+        log.info("\n\n=== releaseFindAll start ===");
+        List<ReleaseFindAllResponseDto> releaseList = releaseService.findAllDesc();
+        for (ReleaseFindAllResponseDto dto : releaseList) {
+            dto.formattingReleaseDate();
+        }
+        model.addAttribute("releaseList", releaseList);
+        log.info("\n\n=== releaseFindAll end ===");
+
+        return "/release/release-find-all";
     }
 
 }

@@ -63,9 +63,11 @@ public class ReleaseApiControllerTest {
         carRepository.deleteAll();
 
     }
-
-    @Before
-    public void init() {
+    
+    @Test
+    @Transactional
+    public void 차량_출고() throws Exception {
+        // given
         String carNumber1 = "04구4716";
         String carNumber2 = "05구4716";
         String carNumber3 = "06구4716";
@@ -80,13 +82,8 @@ public class ReleaseApiControllerTest {
         carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
         carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
         carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
-    }
-    
-    @Test
-    @Transactional
-    public void 차량_출고() throws Exception {
-        // given
-        String staff = "박성민";
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
         int deposit = 15000000;
@@ -113,7 +110,6 @@ public class ReleaseApiControllerTest {
                 .staff(staff)
                 .salesStaff(salesStaff)
                 .price(price)
-                .deposit(deposit)
                 .carId(carId)
                 .status(status)
                 .payments(paymentRequestDtos)
@@ -139,7 +135,6 @@ public class ReleaseApiControllerTest {
         assertThat(release.getStaff()).isEqualTo(staff);
         assertThat(release.getSalesStaff()).isEqualTo(salesStaff);
         assertThat(release.getPrice()).isEqualTo(price);
-        assertThat(release.getDeposit()).isEqualTo(deposit);
         assertThat(release.getStatus()).isEqualTo(status);
         assertThat(release.getCreatedDate()).isNotNull();
         assertThat(release.getModifiedDate()).isNotNull();
@@ -200,7 +195,6 @@ public class ReleaseApiControllerTest {
                 .staff(staff)
                 .salesStaff(salesStaff)
                 .price(price)
-                .deposit(deposit)
                 .carId(carId)
                 .status(status)
                 .payments(paymentRequestDtos)
@@ -222,10 +216,24 @@ public class ReleaseApiControllerTest {
     @Transactional
     public void 차량_출고_이미_출고된_차량() throws Exception {
         // given
-        Car car = carRepository.findById(1L).get();
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
         car.release(LocalDateTime.now());
 
-        String staff = "박성민";
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
         int deposit = 15000000;
@@ -252,7 +260,6 @@ public class ReleaseApiControllerTest {
                 .staff(staff)
                 .salesStaff(salesStaff)
                 .price(price)
-                .deposit(deposit)
                 .carId(carId)
                 .status(status)
                 .payments(paymentRequestDtos)
@@ -274,27 +281,38 @@ public class ReleaseApiControllerTest {
     @Transactional
     public void 출고_차량_전체_조회_최신순() throws Exception {
         // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        Car car1 = carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car2 = carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car3 = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
-        int deposit = 15000000;
+        int cashAmount = 15000000;
         ReleaseStatus status = ReleaseStatus.READY;
-
-        Car car1 = carRepository.findById(1L).get();
-        Car car2 = carRepository.findById(2L).get();
-        Car car3 = carRepository.findById(3L).get();
 
         List<Payment> payments1 = new ArrayList<>();
         Payment cashPayment1 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments1.add(cashPayment1);
 
         Payment cardPayment1 = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
@@ -303,14 +321,14 @@ public class ReleaseApiControllerTest {
         List<Payment> payments2 = new ArrayList<>();
         Payment cashPayment2 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments2.add(cashPayment2);
 
         Payment cardPayment2 = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
@@ -319,22 +337,22 @@ public class ReleaseApiControllerTest {
         List<Payment> payments3 = new ArrayList<>();
         Payment cashPayment3 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments3.add(cashPayment3);
 
         Payment cardPayment3 = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
         payments3.add(cardPayment3);
 
-        Release release1 = getRelease(staff, salesStaff, price, deposit, status, car1, payments1);
-        Release release2 = getRelease(staff, salesStaff, price, deposit, status, car2, payments2);
-        Release release3 = getRelease(staff, salesStaff, price, deposit, status, car3, payments3);
+        Release release1 = getRelease(staff, salesStaff, price, status, car1, payments1);
+        Release release2 = getRelease(staff, salesStaff, price, status, car2, payments2);
+        Release release3 = getRelease(staff, salesStaff, price, status, car3, payments3);
         release1.create(car1);
         release2.create(car2);
         release3.create(car3);
@@ -350,38 +368,51 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.status").value("200"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data[0].id").value(3L));
+                .andExpect(jsonPath("$.data[0].id").value(release3.getId()));
     }
 
     @Test
     @Transactional
     public void 출고_차량_1개_조회() throws Exception {
         // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
-        int deposit = 15000000;
+        int cashAmount = 15000000;
         ReleaseStatus status = ReleaseStatus.READY;
-
-        Car car = carRepository.findById(1L).get();
 
         List<Payment> payments = new ArrayList<>();
         Payment cashPayment1 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments.add(cashPayment1);
 
         Payment cardPayment = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
         payments.add(cardPayment);
 
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, status, car, payments));
         release.create(car);
 
         // when
@@ -392,7 +423,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.status").value("200"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data.id").value(1L));
+                .andExpect(jsonPath("$.data.id").value(release.getId()));
     }
 
     @Test
@@ -416,31 +447,45 @@ public class ReleaseApiControllerTest {
     @Transactional
     public void 출고_취소() throws Exception {
         // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
-        int deposit = 15000000;
+        int cashAmount = 15000000;
         ReleaseStatus status = ReleaseStatus.READY;
-
-        Car car = carRepository.findById(1L).get();
 
         List<Payment> payments = new ArrayList<>();
         Payment cashPayment1 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments.add(cashPayment1);
 
         Payment cardPayment = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
         payments.add(cardPayment);
 
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, status, car, payments));
         release.create(car);
 
         ReleaseUpdateRequestDto requestDto = ReleaseUpdateRequestDto.builder()
@@ -456,7 +501,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.status").value("200"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data.id").value(1L));
+                .andExpect(jsonPath("$.data.id").value(release.getId()));
 
         // then
         List<Release> list = releaseRepository.findAll();
@@ -469,31 +514,44 @@ public class ReleaseApiControllerTest {
     @Transactional
     public void 출고_완료_처리() throws Exception {
         // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
-        int deposit = 15000000;
+        int cashAmount = 15000000;
         ReleaseStatus status = ReleaseStatus.READY;
-
-        Car car = carRepository.findById(1L).get();
 
         List<Payment> payments = new ArrayList<>();
         Payment cashPayment1 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments.add(cashPayment1);
 
         Payment cardPayment = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
         payments.add(cardPayment);
 
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, status, car, payments));
         release.create(car);
 
         ReleaseUpdateRequestDto requestDto = ReleaseUpdateRequestDto.builder()
@@ -509,7 +567,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.status").value("200"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data.id").value(1L));
+                .andExpect(jsonPath("$.data.id").value(release.getId()));
 
         // then
         List<Release> list = releaseRepository.findAll();
@@ -558,31 +616,44 @@ public class ReleaseApiControllerTest {
     @Transactional
     public void 출고_상태_변경_이미_취소된_상태() throws Exception {
         // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
         String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+        staff = "박성민";
         String salesStaff = "이재광";
         int price = 30000000;
-        int deposit = 15000000;
+        int cashAmount = 15000000;
         ReleaseStatus status = ReleaseStatus.READY;
-
-        Car car = carRepository.findById(1L).get();
 
         List<Payment> payments = new ArrayList<>();
         Payment cashPayment1 = Payment.builder()
                 .paymentType(PaymentType.CASH)
-                .pay_amount(deposit)
+                .pay_amount(cashAmount)
                 .instalment(0)
                 .build();
         payments.add(cashPayment1);
 
         Payment cardPayment = Payment.builder()
                 .paymentType(PaymentType.CARD)
-                .pay_amount(price - deposit)
+                .pay_amount(price - cashAmount)
                 .instalment(36)
                 .capital("현대")
                 .build();
         payments.add(cardPayment);
 
-        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, deposit, status, car, payments));
+        Release release = releaseRepository.save(getRelease(staff, salesStaff, price, status, car, payments));
         release.create(car);
         release.cancel();
 
@@ -602,12 +673,11 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    private Release getRelease(String staff, String salesStaff, int price, int deposit, ReleaseStatus status, Car car, List<Payment> payments) {
+    private Release getRelease(String staff, String salesStaff, int price, ReleaseStatus status, Car car, List<Payment> payments) {
         return Release.builder()
                 .staff(staff)
                 .salesStaff(salesStaff)
                 .price(price)
-                .deposit(deposit)
                 .status(status)
                 .car(car)
                 .payments(payments)

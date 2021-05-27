@@ -5,9 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ReleaseRepository extends JpaRepository<Release, Long> {
-
-    @Query("SELECT r FROM Release r ORDER BY r.id DESC")
-    public List<Release> findAllDesc();
+public interface ReleaseRepository extends JpaRepository<Release, Long>, ReleaseRepositoryCustom {
 
 }

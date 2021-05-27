@@ -29,7 +29,6 @@ public class Release extends BaseTimeEntity {
     private String staff;
     private String salesStaff;
     private int price;
-    private int deposit;
 
     @Enumerated(EnumType.STRING)
     private ReleaseStatus status;
@@ -44,11 +43,10 @@ public class Release extends BaseTimeEntity {
     private List<Payment> payments = new ArrayList<>();
 
     @Builder
-    public Release(String staff, String salesStaff, int price, int deposit, ReleaseStatus status, Car car, List<Payment> payments) {
+    public Release(String staff, String salesStaff, int price, ReleaseStatus status, Car car, List<Payment> payments) {
         this.staff = staff;
         this.salesStaff = salesStaff;
         this.price = price;
-        this.deposit = deposit;
         this.car = car;
         this.status = status;
         for (Payment payment : payments) {

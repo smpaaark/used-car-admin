@@ -1,11 +1,16 @@
 package com.usedcar.admin.domain.car;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface CarRepositoryCustom {
 
-    public List<Car> findByCarNumber(String carNumber);
+    public Long countByCarNumber(String carNumber);
+
+    public List<Car> findAllDesc();
+
+    public Optional<Car> findCarStatus(Long carId);
+
+    public List<Car> findNormal();
 
 }
