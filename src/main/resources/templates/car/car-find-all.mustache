@@ -23,7 +23,12 @@
                         <td>{{color}}</td>
                         <td>{{productionYear}}</td>
                         <td>{{staff}}</td>
-                        <td>{{status}}</td>
+                    {{#isReleased}}
+                        <td class="font-red">{{status}}</td>
+                    {{/isReleased}}
+                    {{^isReleased}}
+                        <td class="font-green">{{status}}</td>
+                    {{/isReleased}}
                 </tr>
             {{/cars}}
             </tbody>

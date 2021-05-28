@@ -1,6 +1,6 @@
 {{>layout/header}}
 
-<body>
+<body id="car-find-normal-body">
 <div class="container">
     {{>layout/bodyHeader}}
     <h1>출고할 차량 선택</h1>
@@ -17,13 +17,15 @@
             </thead>
             <tbody>
             {{#cars}}
-                <tr onClick="location.href='/car/find/{{id}}'">
-                        <td>{{id}}</td>
-                        <td><a href="/car/find/{{id}}">{{model}}</a></td>
-                        <td>{{color}}</td>
-                        <td>{{productionYear}}</td>
-                        <td>{{staff}}</td>
-                    <td><a class="btn btn-success" href="/release/save/{{id}}">출고</a></td>
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{model}}</td>
+                    <td>{{color}}</td>
+                    <td>{{productionYear}}</td>
+                    <td>{{staff}}</td>
+                    <td>
+                        <a href="javascript:void(0);" class="btn btn-success" onclick="normalRelease('{{id}}', '{{carNumber}}', '{{model}}', '{{color}}');">출고</a>
+                    </td>
                 </tr>
             {{/cars}}
             </tbody>

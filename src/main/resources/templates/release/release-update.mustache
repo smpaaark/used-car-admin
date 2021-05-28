@@ -1,0 +1,73 @@
+{{>layout/header}}
+
+<body>
+<div class="container">
+    {{>layout/bodyHeader}}
+    <form>
+        <h1>🚘출고 정보</h1>
+        <p>🛠 출고 상태 변경 후 [수정] 버튼을 누르면 출고 상태가 변경됩니다.<br>🚗 이미 출고 취소된 경우 출고 상태 변경이 불가능합니다.</p>
+        <input type="hidden" id="releaseId" value="{{release.id}}"/>
+        <div class="form-group">
+            <label>차량 번호</label>
+            <input type="text" class="form-control" id="carNumber" value="{{release.car.carNumber}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>차종</label>
+            <input type="text" class="form-control" id="model" value="{{release.car.model}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>색상</label>
+            <input type="text" class="form-control" id="color" value="{{release.car.color}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>담당 직원</label>
+            <input type="text" class="form-control" id="staff" value="{{release.staff}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>판매 직원</label>
+            <input type="text" class="form-control" id="salesStaff" value="{{release.salesStaff}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>판매 가격</label>
+            <input type="text" class="form-control" id="price" value="{{release.price}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>[현금]결제 금액</label>
+            <input type="text" class="form-control" id="cash_pay_amount" value="{{release.cash_pay_amount}}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>[카드]결제 금액</label>
+            <input type="text" class="form-control" id="card_pay_amount" value="{{release.card_pay_amount}}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>[카드]할부 개월수</label>
+            <input type="number" class="form-control" id="instalment" value="{{release.instalment}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>[카드]캐피탈</label>
+            <input type="text" class="form-control" id="capital" value="{{release.capital}}" readonly>
+        </div>
+        <div class="form-group">
+            <label>출고 상태</label>
+            {{#release.isCanceled}}
+                <input type="text" class="form-control font-red" id="capital" value="{{#statusList}}{{.}}{{/statusList}}" readonly>
+            {{/release.isCanceled}}
+            {{^release.isCanceled}}
+                <select class="form-control" id="status">
+                    {{#statusList}}
+                        <option>{{.}}</option>
+                    {{/statusList}}
+                </select>
+            {{/release.isCanceled}}
+        </div>
+
+        <a href="/release/findAll" role="button" class="btn btn-secondary cancel-button">뒤로</a>
+        {{^release.isCanceled}}
+            <button type="button" class="btn btn-primary" id="btn-release-update">출고 상태 변경</button>
+        {{/release.isCanceled}}
+    </form>
+    <br/>
+
+{{>layout/footer}}

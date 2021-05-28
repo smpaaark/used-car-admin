@@ -1,12 +1,14 @@
 package com.usedcar.admin.web;
 
 import com.usedcar.admin.domain.car.Category;
+import com.usedcar.admin.domain.release.ReleaseStatus;
 import com.usedcar.admin.service.car.CarService;
 import com.usedcar.admin.service.release.ReleaseService;
 import com.usedcar.admin.web.dto.car.CarFindAllResponseDto;
 import com.usedcar.admin.web.dto.car.CarFindResponseDto;
 import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
 import com.usedcar.admin.web.dto.release.ReleaseFindAllResponseDto;
+import com.usedcar.admin.web.dto.release.ReleaseFindResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -119,6 +121,30 @@ public class IndexController extends ErrorController {
         log.info("\n\n=== releaseFindAll end ===");
 
         return "/release/release-find-all";
+    }
+
+    @GetMapping("/release/find/{releaseId}")
+    public String releaseFind(@PathVariable("releaseId") Long releaseId, Model model) {
+        log.info("\n\n=== releaseFind start ===");
+        ReleaseFindResponseDto release = releaseService.findById(releaseId);
+        model.addAttribute("release", release);
+        
+        List<String> statusList = new ArrayList<>();
+        if (release.getStatus() == ReleaseStatus.READY) {
+            statusList.add("입금 대기");
+            statusList.add("출고 완료");
+            statusList.add("출고 취소");
+        } else if (release.getStatus() == ReleaseStatus.COMPLETE){
+            statusList.add("출고 완료");
+            statusList.add("입금 대기");
+            statusList.add("출고 취소");
+        } else {
+            statusList.add("출고 취소");
+        }
+        model.addAttribute("statusList", statusList);
+        log.info("\n\n=== releaseFind end ===");
+
+        return "/release/release-update";
     }
 
 }

@@ -20,6 +20,10 @@ public class ReleaseFindAllResponseDto {
     private String salesStaff;
     private int price;
     private ReleaseStatus status;
+    private String statusString;
+    private boolean isStatusReady;
+    private boolean isStatusComplete;
+    private boolean isStatusCancel;
     private LocalDateTime releaseDate;
     private String formattedReleaseDate;
     private CarFindAllResponseDto car;
@@ -31,6 +35,16 @@ public class ReleaseFindAllResponseDto {
         this.salesStaff = entity.getSalesStaff();
         this.price = entity.getPrice();
         this.status = entity.getStatus();
+        if (status == ReleaseStatus.READY) {
+            this.statusString = "입금 대기";
+            this.isStatusReady = true;
+        } else if (status == ReleaseStatus.COMPLETE) {
+            this.statusString = "출고 완료";
+            this.isStatusComplete = true;
+        } else {
+            this.statusString = "출고 취소";
+            this.isStatusCancel = true;
+        }
         this.releaseDate = entity.getReleaseDate();
         this.car = new CarFindAllResponseDto(entity.getCar());
         this.payments = new ArrayList<>();

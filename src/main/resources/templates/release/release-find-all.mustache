@@ -17,13 +17,21 @@
             </thead>
             <tbody>
             {{#releaseList}}
-                <tr onClick="">
+                <tr onClick="location.href='/release/find/{{id}}'">
                         <td>{{id}}</td>
-                        <td><a href="">{{car.model}}</a></td>
+                        <td><a href="/release/find/{{id}}">{{car.model}}</a></td>
                         <td>{{car.color}}</td>
                         <td>{{car.carNumber}}</td>
                         <td>{{formattedReleaseDate}}</td>
-                        <td>{{status}}</td>
+                        {{#isStatusReady}}
+                            <td class="font-green">{{statusString}}</td>
+                        {{/isStatusReady}}
+                        {{#isStatusComplete}}
+                            <td class="font-blue">{{statusString}}</td>
+                        {{/isStatusComplete}}
+                        {{#isStatusCancel}}
+                            <td class="font-red">{{statusString}}</td>
+                        {{/isStatusCancel}}
                 </tr>
             {{/releaseList}}
             </tbody>

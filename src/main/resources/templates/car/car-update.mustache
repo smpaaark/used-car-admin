@@ -20,7 +20,12 @@
         </div>
         <div class="form-group">
             <label>출고 상태</label>
-            <input type="text" class="form-control" id="status" value="{{car.status}}" readonly>
+            {{#car.isReleased}}
+            <input type="text" class="form-control font-red" id="status" value="{{car.status}}" readonly>
+            {{/car.isReleased}}
+            {{^car.isReleased}}
+                <input type="text" class="form-control font-green" id="status" value="{{car.status}}" readonly>
+            {{/car.isReleased}}
         </div>
         <div class="form-group">
             <label>국산/외제</label>
@@ -56,9 +61,11 @@
         <input type="hidden" name="carNumber" value="{{car.carNumber}}"/>
         <input type="hidden" name="carModel" value="{{car.model}}"/>
         <input type="hidden" name="color" value="{{car.color}}"/>
-        <a href="/car/findAll" role="button" class="btn btn-secondary cancel-button">취소</a>
+        <a href="/car/findAll" role="button" class="btn btn-secondary cancel-button">뒤로</a>
         <button type="button" class="btn btn-primary" id="btn-car-update">수정</button>
+        {{^car.isReleased}}
         <button type="submit" class="btn btn-success">출고</button>
+        {{/car.isReleased}}
         <button type="button" class="btn btn-danger" id="btn-car-delete">삭제</button>
     </form>
 

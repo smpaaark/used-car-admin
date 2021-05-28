@@ -62,6 +62,7 @@ public class ReleaseService {
     /**
      * 출고 상태 변경
      */
+    @Transactional
     public ReleaseUpdateResponseDto update(Long releaseId, ReleaseUpdateRequestDto requestDto) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundReleaseException("존재하지 않는 출고 번호입니다.(releaseId: " + releaseId + ")"));
         validateReleaseStatus(release);

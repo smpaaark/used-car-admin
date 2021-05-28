@@ -20,6 +20,7 @@ public class CarFindAllResponseDto {
     private String staff;
     private LocalDateTime purchaseDate;
     private String status;
+    private boolean isReleased;
     private LocalDateTime releaseDate;
 
     public CarFindAllResponseDto(Car entity) {
@@ -35,8 +36,10 @@ public class CarFindAllResponseDto {
         CarStatus status = entity.getStatus();
         if (status == CarStatus.NORMAL) {
             this.status = "출고 가능";
+            this.isReleased = false;
         } else if (status == CarStatus.RELEASE) {
             this.status = "출고 완료";
+            this.isReleased = true;
         }
         this.releaseDate = entity.getReleaseDate();
     }

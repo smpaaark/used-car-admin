@@ -22,6 +22,7 @@ public class CarFindResponseDto {
     private String staff;
     private String purchaseDate;
     private String status;
+    private boolean isReleased;
 
     public CarFindResponseDto(Car entity) {
         this.id = entity.getId();
@@ -35,8 +36,10 @@ public class CarFindResponseDto {
         this.purchaseDate = entity.getPurchaseDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (entity.getStatus() == CarStatus.NORMAL) {
             this.status = "출고 가능";
+            this.isReleased = false;
         } else {
             this.status = "출고 완료";
+            this.isReleased = true;
         }
     }
 
