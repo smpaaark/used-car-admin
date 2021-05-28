@@ -232,12 +232,21 @@ function numberWithCommas(x) {
 }
 
 function calculateReleaseAmount(x) {
+    var price = $('#price').val();
+    if (price == null || price == '') {
+        alert('판매 가격이 입력되지 않았습니다.');
+        $('#cash_pay_amount').val('');
+        $('#card_pay_amount').val('');
+        return;
+    }
+
     var xVal= $("#" + x).val();
     xVal = xVal.replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
     xVal = xVal.replace(/,/g,'');          // ,값 공백처리
     $("#" + x).val(xVal.replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 정규식을 이용해서 3자리 마다 , 추가
 
-    var price = parseInt($('#price').val().replace(/,/g,''));
+    price = parseInt($('#price').val().replace(/,/g,''));
+
     var cash_pay_amount = parseInt($('#cash_pay_amount').val().replace(/,/g,''));
     if (cash_pay_amount > price) {
         alert('판매가격보다 큰 금액을 입력할 수 없습니다.');
