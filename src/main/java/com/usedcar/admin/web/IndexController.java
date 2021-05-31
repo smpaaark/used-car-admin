@@ -1,5 +1,6 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.domain.car.CarSearch;
 import com.usedcar.admin.domain.car.Category;
 import com.usedcar.admin.domain.release.ReleaseStatus;
 import com.usedcar.admin.service.car.CarService;

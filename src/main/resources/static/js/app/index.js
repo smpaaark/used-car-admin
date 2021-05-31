@@ -20,6 +20,10 @@ var main = {
         $('#btn-release-update').on('click', function() {
             _this.releaseStatusUpdate();
         });
+
+        $('#btn-car-search').on('click', function() {
+            _this.carSearch();
+        });
     },
 
     changeCategory : function(category) {
@@ -217,6 +221,27 @@ var main = {
         }).fail(function(error) {
             alert(error.responseJSON.message);
             window.location.href = '/release/findAll';
+        });
+    },
+
+    carSearch : function() {
+        var _this = this;
+
+        var data = {
+            model: $('#car-search-model').val(),
+            status: $('#car-search-status').val()
+        };
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/car/search',
+            dataType: 'json',
+            contentType:'application/json; charset=utf-8',
+            data: data
+        }).done(function() {
+            alert('검색 성공');
+        }).fail(function(error) {
+            alert(error.responseJSON.message);
         });
     }
 };

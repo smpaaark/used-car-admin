@@ -137,28 +137,37 @@ public class CarRepositoryTest {
         // then
         assertThat(cars.size()).isEqualTo(2);
     }
-//
-//    @Test
-//    public void QueryDsl_테스트() throws Exception {
-//        // given
-//        String carNumber = "04구4716";
-//        String vin = "12345678";
-//        Category category = Category.DOMESTIC;
-//        String model = "더 뉴 K5";
-//        String color = "검정";
-//        String productionYear = "2018";
-//        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
-//        String staff = "박성민";
-//
-//        Long id = carRepository.save(getCar(carNumber, vin, category, model, color, productionYear, purchaseDate, staff)).getId();
-//
-//        // when
-//        List<Car> cars = carRepository.findByCarNumber(carNumber);
-//
-//        // then
-//        assertThat(cars.size()).isEqualTo(1);
-//        assertThat(cars.get(0).getCarNumber()).isEqualTo(carNumber);
-//    }
+
+    @Test
+    @Transactional
+    public void 차량_매입_검색() throws Exception {
+        // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        String staff = "박성민";
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+        car.release(LocalDateTime.now());
+
+        CarSearch carSearch = new CarSearch();
+        carSearch.setModel("뉴");
+        carSearch.setStatus(CarStatus.NORMAL);
+
+        // when
+        List<Car> cars = carRepository.findByCarSearch(carSearch);
+
+        // then
+        assertThat(cars.size()).isEqualTo(2);
+    }
 
     private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate, String staff) {
         return Car.builder()

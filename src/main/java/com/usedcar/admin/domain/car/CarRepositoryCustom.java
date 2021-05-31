@@ -13,4 +13,6 @@ public interface CarRepositoryCustom {
 
     public List<Car> findNormal();
 
+    public List<Car> findByCarSearch(CarSearch carSearch);
+
 }

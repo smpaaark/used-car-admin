@@ -4,6 +4,19 @@
 <div class="container">
     {{>layout/bodyHeader}}
     <h1>🧾차량 매입 목록</h1>
+    <form class="form-inline">
+        <div class="form-group mb-2">
+            <input type="text" class="form-control" placeholder="차종" id="car-search-model">
+        </div>
+        <div class="form-group mx-sm-1 mb-2">
+            <select class="form-control" id="car-search-status">
+                <option value="">출고 상태</option>
+                <option value="NORMAL" class="font-green">출고 가능</option>
+                <option value="RELEASE" class="font-red">출고 불가</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary mb-2" id="btn-car-search">검색</button>
+    </form>
     <div>
         <table class="table table-striped">
             <thead> <tr>

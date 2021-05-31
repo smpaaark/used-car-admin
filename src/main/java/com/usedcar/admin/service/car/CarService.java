@@ -2,6 +2,7 @@ package com.usedcar.admin.service.car;
 
 import com.usedcar.admin.domain.car.Car;
 import com.usedcar.admin.domain.car.CarRepository;
+import com.usedcar.admin.domain.car.CarSearch;
 import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.exception.AlreadyReleasedCarException;
 import com.usedcar.admin.exception.DuplicatedCarNumberException;
@@ -76,6 +77,15 @@ public class CarService {
      */
     public List<CarFindAllResponseDto> findNormal() {
         List<Car> cars = carRepository.findNormal();
+
+        return cars.stream().map(CarFindAllResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 차량 검색
+     */
+    public List<CarFindAllResponseDto> findByCarSearch(CarSearch carSearch) {
+        List<Car> cars = carRepository.findByCarSearch(carSearch);
 
         return cars.stream().map(CarFindAllResponseDto::new).collect(Collectors.toList());
     }

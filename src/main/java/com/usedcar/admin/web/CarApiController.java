@@ -1,5 +1,7 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.domain.car.CarSearch;
+import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.service.car.CarDeleteResponseDto;
 import com.usedcar.admin.service.car.CarService;
 import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
@@ -75,6 +77,14 @@ public class CarApiController extends ExceptionController {
         CarDeleteResponseDto responseDto = carService.delete(carId);
         log.info("\n\n=== deleteCar end ===\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));
+    }
+
+    @GetMapping("/api/car/search")
+    public ResponseEntity carSearch(@RequestParam("model") String model, @RequestParam("status") CarStatus status) {
+        log.info("\n\n=== carSearch start ===\n* model: " + model + "\n* status: " + status + "\n");
+        List<CarFindAllResponseDto> responseDtos = carService.findByCarSearch(new CarSearch(model, status));
+        log.info("\n\n=== carSearch end ===\n* carsCount: " + responseDtos.size() + "\n");
+        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDtos));
     }
 
 }

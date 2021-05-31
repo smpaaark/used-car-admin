@@ -1,10 +1,7 @@
 package com.usedcar.admin.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.usedcar.admin.domain.car.Car;
-import com.usedcar.admin.domain.car.CarRepository;
-import com.usedcar.admin.domain.car.CarStatus;
-import com.usedcar.admin.domain.car.Category;
+import com.usedcar.admin.domain.car.*;
 import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
 import com.usedcar.admin.web.dto.car.CarSaveRequestDto;
 import org.junit.After;
@@ -363,6 +360,42 @@ public class CarApiControllerTest {
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+    
+    @Test
+    @Transactional
+    public void 출고_차량_검색() throws Exception {
+        // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+        car.release(LocalDateTime.now());
+
+        CarSearch requestDto = new CarSearch();
+        requestDto.setModel("뉴");
+        requestDto.setStatus(CarStatus.NORMAL);
+
+        // when
+        mvc.perform(get("/api/car/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data[0].id").isNotEmpty());
     }
 
     private Car getCar(String carNumber, String vin, Category category, String model, String color, String productionYear, LocalDateTime purchaseDate, String staff) {
