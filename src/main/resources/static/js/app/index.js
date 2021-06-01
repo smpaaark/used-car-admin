@@ -24,6 +24,14 @@ var main = {
         $('#btn-car-search').on('click', function() {
             _this.carSearch();
         });
+
+        $('#btn-car-normal-search').on('click', function() {
+            _this.carNormalSearch();
+        });
+
+        $('#btn-release-search').on('click', function() {
+            _this.releaseSearch();
+        });
     },
 
     changeCategory : function(category) {
@@ -238,8 +246,52 @@ var main = {
             dataType: 'json',
             contentType:'application/json; charset=utf-8',
             data: data
-        }).done(function() {
-            alert('검색 성공');
+        }).done(function(data) {
+            createCarList(data.data);
+        }).fail(function(error) {
+            alert(error.responseJSON.message);
+        });
+    },
+
+    carNormalSearch : function() {
+        var _this = this;
+
+        var data = {
+            model: $('#car-search-model').val(),
+            status: 'NORMAL'
+        };
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/car/search',
+            dataType: 'json',
+            contentType:'application/json; charset=utf-8',
+            data: data
+        }).done(function(data) {
+            createCarNormalList(data.data);
+        }).fail(function(error) {
+            alert(error.responseJSON.message);
+        });
+    },
+
+    releaseSearch : function() {
+        var _this = this;
+
+        var data = {
+            model: $('#release-search-model').val(),
+            status: $('#release-search-status').val(),
+            startDate: $('#release-search-startDate').val(),
+            endDate: $('#release-search-endDate').val(),
+        };
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/release/search',
+            dataType: 'json',
+            contentType:'application/json; charset=utf-8',
+            data: data
+        }).done(function(data) {
+            createReleaseList(data.data);
         }).fail(function(error) {
             alert(error.responseJSON.message);
         });
@@ -309,4 +361,128 @@ function normalRelease(id, carNumber, model, color) {
 
     $('#car-find-normal-body').append(form);
     form.submit();
+}
+
+function createCarList(data) {
+    var tBody = $('#car-find-all-tbody');
+    tBody.children().remove();
+
+    $.each(data, function(index, el) {
+        var tr = $('<tr>');
+
+        var tdId = $('<td>');
+        tdId.text(el.id);
+        tr.append(tdId);
+
+        var tdModel = $('<td>')
+        var aModel = $('<a href="' + '/car/find/' + el.id + '">');
+        aModel.text(el.model);
+        tdModel.append(aModel);
+        tr.append(tdModel);
+
+        var tdColor = $('<td>');
+        tdColor.text(el.color);
+        tr.append(tdColor);
+
+        var tdProductionYear = $('<td>');
+        tdProductionYear.text(el.productionYear);
+        tr.append(tdProductionYear);
+
+        var tdStaff = $('<td>');
+        tdStaff.text(el.staff);
+        tr.append(tdStaff);
+
+        var tdStatus = null;
+        if (el.released) {
+            tdStatus = $('<td class="font-red">');
+        } else {
+            tdStatus = $('<td class="font-green">');
+        }
+        tdStatus.text(el.status);
+        tr.append(tdStatus);
+
+        tBody.append(tr);
+    });
+}
+
+function createCarNormalList(data) {
+    var tBody = $('#car-find-normal-tbody');
+    tBody.children().remove();
+
+    $.each(data, function(index, el) {
+        var tr = $('<tr>');
+
+        var tdId = $('<td>');
+        tdId.text(el.id);
+        tr.append(tdId);
+
+        var tdModel = $('<td>')
+        tdModel.text(el.model);
+        tr.append(tdModel);
+
+        var tdColor = $('<td>');
+        tdColor.text(el.color);
+        tr.append(tdColor);
+
+        var tdProductionYear = $('<td>');
+        tdProductionYear.text(el.productionYear);
+        tr.append(tdProductionYear);
+
+        var tdStaff = $('<td>');
+        tdStaff.text(el.staff);
+        tr.append(tdStaff);
+
+        var tdButton = $('<td>');
+        var aButton = $('<a href="javascript:void(0);" class="btn btn-success" onclick="normalRelease(' +
+           "'" + el.id + "', '" + el.carNumber + "', '" + el.model + "', '" + el.color + "');" + '">');
+        aButton.text('출고');
+        tdButton.append(aButton);
+        tr.append(tdButton);
+
+        tBody.append(tr);
+    });
+}
+
+function createReleaseList(data) {
+    var tBody = $('#release-find-all-tbody');
+    tBody.children().remove();
+
+    $.each(data, function(index, el) {
+        var tr = $('<tr>');
+
+        var tdId = $('<td>');
+        tdId.text(el.id);
+        tr.append(tdId);
+
+        var tdModel = $('<td>')
+        var aModel = $('<a href="' + '/release/find/' + el.id + '">');
+        aModel.text(el.car.model);
+        tdModel.append(aModel);
+        tr.append(tdModel);
+
+        var tdColor = $('<td>');
+        tdColor.text(el.car.color);
+        tr.append(tdColor);
+
+        var tdCarNumber = $('<td>');
+        tdCarNumber.text(el.car.carNumber);
+        tr.append(tdCarNumber);
+
+        var tdReleaseDate = $('<td>');
+        tdReleaseDate.text(el.formattedReleaseDate);
+        tr.append(tdReleaseDate);
+
+        var tdStatus = null;
+        if (el.statusReady) {
+            tdStatus = $('<td class="font-green">');
+        } else if (el.statusComplete) {
+            tdStatus = $('<td class="font-blue">');
+        } else if (el.statusCancel) {
+            tdStatus = $('<td class="font-red">');
+        }
+        tdStatus.text(el.statusString);
+        tr.append(tdStatus);
+
+        tBody.append(tr);
+    });
 }

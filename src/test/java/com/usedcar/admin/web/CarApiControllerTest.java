@@ -364,7 +364,7 @@ public class CarApiControllerTest {
     
     @Test
     @Transactional
-    public void 출고_차량_검색() throws Exception {
+    public void 매입_차량_검색() throws Exception {
         // given
         String carNumber1 = "04구4716";
         String carNumber2 = "05구4716";
@@ -382,14 +382,10 @@ public class CarApiControllerTest {
         Car car = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
         car.release(LocalDateTime.now());
 
-        CarSearch requestDto = new CarSearch();
-        requestDto.setModel("뉴");
-        requestDto.setStatus(CarStatus.NORMAL);
-
         // when
         mvc.perform(get("/api/car/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
+                .param("model", "뉴")
+                .param("status", "NORMAL"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("200"))

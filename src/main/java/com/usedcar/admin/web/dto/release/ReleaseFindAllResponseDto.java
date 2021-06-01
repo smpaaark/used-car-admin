@@ -46,6 +46,7 @@ public class ReleaseFindAllResponseDto {
             this.isStatusCancel = true;
         }
         this.releaseDate = entity.getReleaseDate();
+        this.formattedReleaseDate = this.releaseDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.car = new CarFindAllResponseDto(entity.getCar());
         this.payments = new ArrayList<>();
         for (Payment payment : entity.getPayments()) {

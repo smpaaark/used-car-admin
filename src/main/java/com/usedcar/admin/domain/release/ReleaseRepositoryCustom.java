@@ -6,4 +6,6 @@ public interface ReleaseRepositoryCustom {
 
     public List<Release> findAllDesc();
 
+    public List<Release> findByReleaseSearch(ReleaseSearch releaseSearch);
+
 }

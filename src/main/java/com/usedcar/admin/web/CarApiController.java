@@ -80,9 +80,9 @@ public class CarApiController extends ExceptionController {
     }
 
     @GetMapping("/api/car/search")
-    public ResponseEntity carSearch(@RequestParam("model") String model, @RequestParam("status") CarStatus status) {
-        log.info("\n\n=== carSearch start ===\n* model: " + model + "\n* status: " + status + "\n");
-        List<CarFindAllResponseDto> responseDtos = carService.findByCarSearch(new CarSearch(model, status));
+    public ResponseEntity carSearch(@ModelAttribute CarSearch carSearch) {
+        log.info("\n\n=== carSearch start ===\n* carSearch: " + carSearch + "\n");
+        List<CarFindAllResponseDto> responseDtos = carService.findByCarSearch(carSearch);
         log.info("\n\n=== carSearch end ===\n* carsCount: " + responseDtos.size() + "\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDtos));
     }

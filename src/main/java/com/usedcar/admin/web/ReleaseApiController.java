@@ -1,5 +1,6 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.domain.release.ReleaseSearch;
 import com.usedcar.admin.service.release.ReleaseService;
 import com.usedcar.admin.web.dto.CommonResponseDto;
 import com.usedcar.admin.web.dto.release.*;
@@ -58,6 +59,14 @@ public class ReleaseApiController extends ExceptionController {
         ReleaseUpdateResponseDto responseDto = releaseService.update(releaseId, requestDto);
         log.info("\n\n=== updateRelease end ===\n");
         return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDto));
+    }
+
+    @GetMapping("/api/release/search")
+    public ResponseEntity releaseSearch(@ModelAttribute ReleaseSearch releaseSearch) {
+        log.info("\n\n=== releaseSearch start ===\n* releaseSearch: " + releaseSearch + "\n");
+        List<ReleaseFindAllResponseDto> responseDtos = releaseService.findByReleaseSearch(releaseSearch);
+        log.info("\n\n=== releaseSearch end ===\n* releaseCount: " + responseDtos.size() + "\n");
+        return ResponseEntity.ok().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.OK.value()), "SUCCESS", responseDtos));
     }
 
 }

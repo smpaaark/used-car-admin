@@ -3,7 +3,13 @@
 <body id="car-find-normal-body">
 <div class="container">
     {{>layout/bodyHeader}}
-    <h1>출고할 차량 선택</h1>
+    <h1>🧾출고할 차량 선택</h1>
+    <form class="form-inline">
+        <div class="form-group mx-sm-1 mb-2">
+            <input type="text" class="form-control" placeholder="차종" id="car-search-model">
+        </div>
+        <button type="button" class="btn btn-primary mb-2" id="btn-car-normal-search">검색</button>
+    </form>
     <div>
         <table class="table table-striped">
             <thead> <tr>
@@ -15,7 +21,7 @@
                 <th></th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="car-find-normal-tbody">
             {{#cars}}
                 <tr>
                     <td>{{id}}</td>

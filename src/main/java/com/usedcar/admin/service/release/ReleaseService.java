@@ -5,6 +5,7 @@ import com.usedcar.admin.domain.car.CarRepository;
 import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseRepository;
+import com.usedcar.admin.domain.release.ReleaseSearch;
 import com.usedcar.admin.domain.release.ReleaseStatus;
 import com.usedcar.admin.exception.AlreadyCanceledReleaseException;
 import com.usedcar.admin.exception.AlreadyReleasedCarException;
@@ -78,6 +79,15 @@ public class ReleaseService {
     }
 
     /**
+     * 출고 차량 검색
+     */
+    public List<ReleaseFindAllResponseDto> findByReleaseSearch(ReleaseSearch releaseSearch) {
+        List<Release> releaseList = releaseRepository.findByReleaseSearch(releaseSearch);
+
+        return releaseList.stream().map(ReleaseFindAllResponseDto::new).collect(Collectors.toList());
+    }
+
+    /**
      * 출고 상태 체크
      */
     private void validateReleaseStatus(Release release) {
@@ -94,5 +104,4 @@ public class ReleaseService {
             throw new AlreadyReleasedCarException("이미 출고된 차량입니다.(carId: " + car.getId() + ")");
         }
     }
-    
 }

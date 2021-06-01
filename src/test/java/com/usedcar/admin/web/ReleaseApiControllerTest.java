@@ -10,6 +10,7 @@ import com.usedcar.admin.domain.payment.PaymentRepository;
 import com.usedcar.admin.domain.payment.PaymentType;
 import com.usedcar.admin.domain.release.Release;
 import com.usedcar.admin.domain.release.ReleaseRepository;
+import com.usedcar.admin.domain.release.ReleaseSearch;
 import com.usedcar.admin.domain.release.ReleaseStatus;
 import com.usedcar.admin.web.dto.payment.PaymentRequestDto;
 import com.usedcar.admin.web.dto.release.ReleaseSaveRequestDto;
@@ -25,10 +26,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -671,6 +674,104 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.responseDate").exists())
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    @Transactional
+    public void 출고_차량_검색() throws Exception {
+        // given
+        String carNumber1 = "04구4716";
+        String carNumber2 = "05구4716";
+        String carNumber3 = "06구4716";
+        String vin = "12345678";
+        Category category = Category.DOMESTIC;
+        String model = "더 뉴 K5";
+        String color = "검정";
+        String productionYear = "2018";
+        String staff = "박성민";
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+
+        Car car1 = carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car2 = carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car car3 = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+
+        staff = "박성민";
+        String salesStaff = "이재광";
+        int price = 30000000;
+        int cashAmount = 15000000;
+        ReleaseStatus status = ReleaseStatus.READY;
+
+        List<Payment> payments1 = new ArrayList<>();
+        Payment cashPayment1 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(cashAmount)
+                .instalment(0)
+                .build();
+        payments1.add(cashPayment1);
+
+        Payment cardPayment1 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - cashAmount)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments1.add(cardPayment1);
+
+        List<Payment> payments2 = new ArrayList<>();
+        Payment cashPayment2 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(cashAmount)
+                .instalment(0)
+                .build();
+        payments2.add(cashPayment2);
+
+        Payment cardPayment2 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - cashAmount)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments2.add(cardPayment2);
+
+        List<Payment> payments3 = new ArrayList<>();
+        Payment cashPayment3 = Payment.builder()
+                .paymentType(PaymentType.CASH)
+                .pay_amount(cashAmount)
+                .instalment(0)
+                .build();
+        payments3.add(cashPayment3);
+
+        Payment cardPayment3 = Payment.builder()
+                .paymentType(PaymentType.CARD)
+                .pay_amount(price - cashAmount)
+                .instalment(36)
+                .capital("현대")
+                .build();
+        payments3.add(cardPayment3);
+
+        Release release1 = getRelease(staff, salesStaff, price, status, car1, payments1);
+        Release release2 = getRelease(staff, salesStaff, price, status, car2, payments2);
+        Release release3 = getRelease(staff, salesStaff, price, status, car3, payments3);
+        release1.create(car1);
+        release2.create(car2);
+        release3.create(car3);
+        releaseRepository.save(release1);
+        releaseRepository.save(release2);
+        Release savedRelease = releaseRepository.save(release3);
+        savedRelease.cancel();
+
+        // when
+        mvc.perform(get("/api/release/search")
+                .param("model", "뉴")
+                .param("status", "CANCEL")
+                .param("startDate", "2021-06-01")
+                .param("endDate", "2021-06-02"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200"))
+                .andExpect(jsonPath("$.message").value("SUCCESS"))
+                .andExpect(jsonPath("$.responseDate").exists())
+                .andExpect(jsonPath("$.data[0].id").isNotEmpty());
     }
 
     private Release getRelease(String staff, String salesStaff, int price, ReleaseStatus status, Car car, List<Payment> payments) {
