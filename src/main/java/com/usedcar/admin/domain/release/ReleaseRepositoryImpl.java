@@ -22,7 +22,11 @@ public class ReleaseRepositoryImpl implements ReleaseRepositoryCustom {
     @Override
     public List<Release> findAllDesc() {
         return queryFactory
-                .selectFrom(release)
+                .selectDistinct(release)
+                .from(release)
+                .innerJoin(release.car)
+                .innerJoin(release.payments)
+                .fetchJoin()
                 .orderBy(release.id.desc())
                 .fetch();
     }
