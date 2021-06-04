@@ -24,6 +24,7 @@ public class ReleaseRepositoryImpl implements ReleaseRepositoryCustom {
                 .selectDistinct(release)
                 .from(release)
                 .innerJoin(release.car)
+                .fetchJoin()
                 .innerJoin(release.payments)
                 .fetchJoin()
                 .orderBy(release.id.desc())
