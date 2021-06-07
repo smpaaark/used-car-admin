@@ -25,3 +25,6 @@
 * Git & GitHub
 * IntelliJ
 * Mustache, JavaScript, jQuery
+
+## 아키텍처
+![아키텍처](https://raw.githubusercontent.com/smpark1020/tistory/master/%EC%82%AC%EC%9D%B4%EB%93%9C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98.png)
