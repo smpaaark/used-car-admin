@@ -5,6 +5,13 @@
     {{>layout/bodyHeader}}
     <div class="jumbotron">
         <h1>🚘중고차 관리 프로그램🚖</h1>
+        {{#userName}}
+        <p class="lead">로그인 기능</p>
+        <p>
+            <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>
+            <a class="btn btn-lg btn-dark" href="/car/findAll">차량 목록</a>
+        </p>
+        {{/userName}}
         <p class="lead">차량 매입 기능</p>
         <p>
             <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>

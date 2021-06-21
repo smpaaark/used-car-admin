@@ -1,6 +1,7 @@
 package com.usedcar.admin.config.auth;
 
 import com.usedcar.admin.config.auth.dto.OAuthAttributes;
+import com.usedcar.admin.config.auth.dto.SessionUser;
 import com.usedcar.admin.domain.user.User;
 import com.usedcar.admin.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
