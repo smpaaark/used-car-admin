@@ -1,5 +1,6 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.config.auth.dto.SessionUser;
 import com.usedcar.admin.domain.car.CarSearch;
 import com.usedcar.admin.domain.car.Category;
 import com.usedcar.admin.domain.release.ReleaseStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +30,17 @@ public class IndexController extends ErrorController {
 
     private final CarService carService;
     private final ReleaseService releaseService;
+    private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
         log.info("\n\n=== index start ===");
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
+
         log.info("\n\n=== index end ===");
         return "index";
     }
@@ -47,6 +56,11 @@ public class IndexController extends ErrorController {
         model.addAttribute("requestDto", new CarSaveRequestDto());
         model.addAttribute("years", years);
 
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
+
         log.info("\n\n=== carSave end ===");
         return "/car/car-save";
     }
@@ -56,6 +70,11 @@ public class IndexController extends ErrorController {
         log.info("\n\n=== carFindAll start ===");
         List<CarFindAllResponseDto> cars = carService.findAllDesc();
         model.addAttribute("cars", cars);
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
+
         log.info("\n\n=== carFindAll end ===");
 
         return "/car/car-find-all";
@@ -83,6 +102,11 @@ public class IndexController extends ErrorController {
             category.add("국산");
         }
         model.addAttribute("category", category);
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         log.info("\n\n=== carFind end ===");
 
         return "/car/car-update";
@@ -94,6 +118,10 @@ public class IndexController extends ErrorController {
         List<CarFindAllResponseDto> cars = carService.findNormal();
         model.addAttribute("cars", cars);
 
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         log.info("\n\n=== carFindNormal end ===");
 
         return "/car/car-find-normal";
@@ -107,6 +135,10 @@ public class IndexController extends ErrorController {
         model.addAttribute("model", carModel);
         model.addAttribute("color", color);
 
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         log.info("\n\n=== release end ===");
         return "/release/release";
     }
@@ -119,6 +151,11 @@ public class IndexController extends ErrorController {
             dto.formattingReleaseDate();
         }
         model.addAttribute("releaseList", releaseList);
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         log.info("\n\n=== releaseFindAll end ===");
 
         return "/release/release-find-all";
@@ -143,6 +180,11 @@ public class IndexController extends ErrorController {
             statusList.add("출고 취소");
         }
         model.addAttribute("statusList", statusList);
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        }
         log.info("\n\n=== releaseFind end ===");
 
         return "/release/release-update";

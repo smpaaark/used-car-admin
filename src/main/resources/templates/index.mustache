@@ -5,23 +5,25 @@
     {{>layout/bodyHeader}}
     <div class="jumbotron">
         <h1>🚘중고차 관리 프로그램🚖</h1>
-        {{#userName}}
-        <p class="lead">로그인 기능</p>
-        <p>
-            <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>
-            <a class="btn btn-lg btn-dark" href="/car/findAll">차량 목록</a>
-        </p>
-        {{/userName}}
-        <p class="lead">차량 매입 기능</p>
-        <p>
-            <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>
-            <a class="btn btn-lg btn-dark" href="/car/findAll">차량 목록</a>
-        </p>
-        <p class="lead">차량 출고 기능</p>
-        <p>
-            <a class="btn btn-lg btn-info" href="/car/findNormal">차량 출고</a>
-            <a class="btn btn-lg btn-info" href="/release/findAll">출고 목록</a>
-        </p>
+        {{#name}}
+            <p class="lead">차량 매입 기능</p>
+            <p>
+                <a class="btn btn-lg btn-dark" href="/car/save">차량 매입</a>
+                <a class="btn btn-lg btn-dark" href="/car/findAll">차량 목록</a>
+            </p>
+            <p class="lead">차량 출고 기능</p>
+            <p>
+                <a class="btn btn-lg btn-info" href="/car/findNormal">차량 출고</a>
+                <a class="btn btn-lg btn-info" href="/release/findAll">출고 목록</a>
+            </p>
+        {{/name}}
+        {{^name}}
+            <p class="lead">🔐Login</p>
+            <p>
+                <a href="/oauth2/authorization/google" class="btn btn-lg btn-primary">Google Login</a>
+<!--                <a href="/oauth2/authorization/naver" class="btn btn-lg btn-success">Naver Login</a>-->
+            </p>
+        {{/name}}
     </div>
 
 {{>layout/footer}}
