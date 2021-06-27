@@ -1,5 +1,6 @@
 package com.usedcar.admin.web;
 
+import com.usedcar.admin.config.auth.LoginUser;
 import com.usedcar.admin.config.auth.dto.SessionUser;
 import com.usedcar.admin.domain.car.CarSearch;
 import com.usedcar.admin.domain.car.Category;
@@ -33,10 +34,9 @@ public class IndexController extends ErrorController {
     private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @LoginUser SessionUser user) { //
         log.info("\n\n=== index start ===");
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -46,7 +46,7 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/car/save")
-    public String carSave(Model model) {
+    public String carSave(Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== carSave start ===");
         List<Integer> years = new ArrayList<>();
         for (int i = 2021; i >= 1990; i--) {
@@ -56,7 +56,6 @@ public class IndexController extends ErrorController {
         model.addAttribute("requestDto", new CarSaveRequestDto());
         model.addAttribute("years", years);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -66,11 +65,11 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/car/findAll")
-    public String carFindAll(Model model) {
+    public String carFindAll(Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== carFindAll start ===");
         List<CarFindAllResponseDto> cars = carService.findAllDesc();
         model.addAttribute("cars", cars);
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -81,7 +80,7 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/car/find/{carId}")
-    public String carFind(@PathVariable("carId") Long carId, Model model) {
+    public String carFind(@PathVariable("carId") Long carId, Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== carFind start ===");
         CarFindResponseDto car = carService.findById(carId);
         model.addAttribute("car", car);
@@ -103,7 +102,6 @@ public class IndexController extends ErrorController {
         }
         model.addAttribute("category", category);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -113,12 +111,11 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/car/findNormal")
-    public String carFindNormal(Model model) {
+    public String carFindNormal(Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== carFindNormal start ===");
         List<CarFindAllResponseDto> cars = carService.findNormal();
         model.addAttribute("cars", cars);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -128,14 +125,15 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/release")
-    public String release(Model model, @RequestParam Long carId, @RequestParam String carNumber, @RequestParam String carModel, @RequestParam String color) {
+    public String release(Model model, @RequestParam Long carId, @RequestParam String carNumber,
+                          @RequestParam String carModel, @RequestParam String color,
+                          @LoginUser SessionUser user) {
         log.info("\n\n=== release start ===");
         model.addAttribute("carId", carId);
         model.addAttribute("carNumber", carNumber);
         model.addAttribute("model", carModel);
         model.addAttribute("color", color);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -144,7 +142,7 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/release/findAll")
-    public String releaseFindAll(Model model) {
+    public String releaseFindAll(Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== releaseFindAll start ===");
         List<ReleaseFindAllResponseDto> releaseList = releaseService.findAllDesc();
         for (ReleaseFindAllResponseDto dto : releaseList) {
@@ -152,7 +150,6 @@ public class IndexController extends ErrorController {
         }
         model.addAttribute("releaseList", releaseList);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
@@ -162,7 +159,7 @@ public class IndexController extends ErrorController {
     }
 
     @GetMapping("/release/find/{releaseId}")
-    public String releaseFind(@PathVariable("releaseId") Long releaseId, Model model) {
+    public String releaseFind(@PathVariable("releaseId") Long releaseId, Model model, @LoginUser SessionUser user) {
         log.info("\n\n=== releaseFind start ===");
         ReleaseFindResponseDto release = releaseService.findById(releaseId);
         model.addAttribute("release", release);
@@ -181,7 +178,6 @@ public class IndexController extends ErrorController {
         }
         model.addAttribute("statusList", statusList);
 
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
         if (user != null) {
             model.addAttribute("name", user.getName());
         }
