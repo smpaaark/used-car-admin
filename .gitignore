@@ -1,7 +1,7 @@
 .mvn
 .log
 generated
-application-auth.properties
+application-oauth.properties
 
 HELP.md
 target/
