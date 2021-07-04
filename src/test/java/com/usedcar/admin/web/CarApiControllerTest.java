@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(roles = "USER")
 public class CarApiControllerTest {
 
     @Autowired
@@ -250,6 +252,7 @@ public class CarApiControllerTest {
                 .model(model2)
                 .color(color2)
                 .productionYear(productionYear2)
+                .staff(staff)
                 .build();
 
         // when
@@ -261,7 +264,7 @@ public class CarApiControllerTest {
                 .andExpect(jsonPath("$.status").value("200"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data").value(carId));
+                .andExpect(jsonPath("$.data.id").value(carId));
 
         // then
         List<Car> list = carRepository.findAll();
@@ -277,7 +280,18 @@ public class CarApiControllerTest {
     @Test
     public void 차량_정보_수정_존재하지_않는_차량() throws Exception {
         // given
-        CarUpdateRequestDto requestDto = CarUpdateRequestDto.builder().build();
+        Category category2 = Category.FOREIGN;
+        String model2 = "G70";
+        String color2 = "흰색";
+        String productionYear2 = "2021";
+        String staff = "박성민";
+        CarUpdateRequestDto requestDto = CarUpdateRequestDto.builder()
+                .category(category2)
+                .model(model2)
+                .color(color2)
+                .productionYear(productionYear2)
+                .staff(staff)
+                .build();
 
         // when
         mvc.perform(put("/api/car/0")

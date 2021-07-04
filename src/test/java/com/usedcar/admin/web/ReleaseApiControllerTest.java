@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(roles = "USER")
 public class ReleaseApiControllerTest {
 
     @Autowired
@@ -689,7 +691,7 @@ public class ReleaseApiControllerTest {
         String color = "검정";
         String productionYear = "2018";
         String staff = "박성민";
-        LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
+        LocalDateTime purchaseDate = LocalDateTime.of(2021, 06, 02, 0, 0);
 
         Car car1 = carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
         Car car2 = carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
@@ -765,7 +767,7 @@ public class ReleaseApiControllerTest {
                 .param("model", "뉴")
                 .param("status", "CANCEL")
                 .param("startDate", "2021-06-01")
-                .param("endDate", "2021-06-02"))
+                .param("endDate", "2021-06-03"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("200"))
