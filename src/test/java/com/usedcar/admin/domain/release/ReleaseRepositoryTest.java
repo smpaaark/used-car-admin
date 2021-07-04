@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -323,8 +324,8 @@ public class ReleaseRepositoryTest {
         ReleaseSearch releaseSearch = new ReleaseSearch();
         releaseSearch.setModel("뉴");
         releaseSearch.setStatus(ReleaseStatus.CANCEL);
-        releaseSearch.setStartDate("2021-06-01");
-        releaseSearch.setEndDate("2021-06-02");
+        releaseSearch.setStartDate(LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        releaseSearch.setEndDate(LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         // when
         List<Release> releaseList = releaseRepository.findByReleaseSearch(releaseSearch);

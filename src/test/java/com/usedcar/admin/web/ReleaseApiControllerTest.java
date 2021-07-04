@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,18 +82,18 @@ public class ReleaseApiControllerTest {
         String model = "더 뉴 K5";
         String color = "검정";
         String productionYear = "2018";
-        String staff = "박성민";
+        String staff = "윤영선";
         LocalDateTime purchaseDate = LocalDateTime.of(2021, 05, 12, 0, 0);
 
         carRepository.save(getCar(carNumber1, vin, category, model, color, productionYear, purchaseDate, staff));
         carRepository.save(getCar(carNumber2, vin, category, model, color, productionYear, purchaseDate, staff));
-        carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
+        Car saveCar = carRepository.save(getCar(carNumber3, vin, category, model, color, productionYear, purchaseDate, staff));
 
-        staff = "박성민";
-        String salesStaff = "이재광";
+        staff = "윤영선";
+        String salesStaff = "윤영선";
         int price = 30000000;
         int deposit = 15000000;
-        Long carId = 1L;
+        Long carId = saveCar.getId();
         ReleaseStatus status = ReleaseStatus.READY;
 
         List<PaymentRequestDto> paymentRequestDtos = new ArrayList<>();
@@ -129,7 +130,7 @@ public class ReleaseApiControllerTest {
                 .andExpect(jsonPath("$.status").value("201"))
                 .andExpect(jsonPath("$.message").value("SUCCESS"))
                 .andExpect(jsonPath("$.responseDate").exists())
-                .andExpect(jsonPath("$.data.id").value(1L));
+                .andExpect(jsonPath("$.data.id").exists());
         
         // then
         List<Release> list = releaseRepository.findAll();
@@ -766,8 +767,8 @@ public class ReleaseApiControllerTest {
         mvc.perform(get("/api/release/search")
                 .param("model", "뉴")
                 .param("status", "CANCEL")
-                .param("startDate", "2021-06-01")
-                .param("endDate", "2021-06-03"))
+                .param("startDate", LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .param("endDate", LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("200"))
