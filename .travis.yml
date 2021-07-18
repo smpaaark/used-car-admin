@@ -11,6 +11,9 @@ cache:
   directories:
     - '$HOME/.m2'
 
+before_install:
+  - chmod +x mvnw
+
 script: "./mvnw clean package"
 
 # CI 실행 완료시 메일로 알람
