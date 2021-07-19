@@ -111,6 +111,7 @@ var main = {
             alert('차량이 매입되었습니다.');
             window.location.href = '/car/findAll';
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
         });
     },
@@ -139,6 +140,7 @@ var main = {
             alert('차량 정보가 수정되었습니다.');
             window.location.href = '/car/findAll';
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
             window.location.href = '/car/findAll';
         });
@@ -156,6 +158,7 @@ var main = {
             alert('차량이 삭제되었습니다.');
             window.location.href = '/car/findAll';
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
             window.location.href = '/car/findAll';
         });
@@ -198,6 +201,7 @@ var main = {
             alert('차량이 출고되었습니다.');
             window.location.href = '/release/findAll';
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
         });
     },
@@ -227,6 +231,7 @@ var main = {
             alert('출고 상태가 변경되었습니다.');
             window.location.href = '/release/findAll';
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
             window.location.href = '/release/findAll';
         });
@@ -249,6 +254,7 @@ var main = {
         }).done(function(data) {
             createCarList(data.data);
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
         });
     },
@@ -270,6 +276,7 @@ var main = {
         }).done(function(data) {
             createCarNormalList(data.data);
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
         });
     },
@@ -293,6 +300,7 @@ var main = {
         }).done(function(data) {
             createReleaseList(data.data);
         }).fail(function(error) {
+            console.log(error);
             alert(error.responseJSON.message);
         });
     }
