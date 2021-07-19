@@ -61,7 +61,7 @@ public class IndexController extends ErrorController {
         }
 
         log.info("\n\n=== carSave end ===");
-        return "/car/car-save";
+        return "car/car-save";
     }
 
     @GetMapping("/car/findAll")
@@ -76,7 +76,7 @@ public class IndexController extends ErrorController {
 
         log.info("\n\n=== carFindAll end ===");
 
-        return "/car/car-find-all";
+        return "car/car-find-all";
     }
 
     @GetMapping("/car/find/{carId}")
@@ -107,7 +107,7 @@ public class IndexController extends ErrorController {
         }
         log.info("\n\n=== carFind end ===");
 
-        return "/car/car-update";
+        return "car/car-update";
     }
 
     @GetMapping("/car/findNormal")
@@ -121,7 +121,7 @@ public class IndexController extends ErrorController {
         }
         log.info("\n\n=== carFindNormal end ===");
 
-        return "/car/car-find-normal";
+        return "car/car-find-normal";
     }
 
     @GetMapping("/release")
@@ -138,7 +138,7 @@ public class IndexController extends ErrorController {
             model.addAttribute("name", user.getName());
         }
         log.info("\n\n=== release end ===");
-        return "/release/release";
+        return "release/release";
     }
 
     @GetMapping("/release/findAll")
@@ -155,7 +155,7 @@ public class IndexController extends ErrorController {
         }
         log.info("\n\n=== releaseFindAll end ===");
 
-        return "/release/release-find-all";
+        return "release/release-find-all";
     }
 
     @GetMapping("/release/find/{releaseId}")
@@ -183,7 +183,7 @@ public class IndexController extends ErrorController {
         }
         log.info("\n\n=== releaseFind end ===");
 
-        return "/release/release-update";
+        return "release/release-update";
     }
 
 }
