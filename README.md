@@ -21,9 +21,12 @@
 * Spring Security
 * JUnit4
 * Maven
-* H2
-* Git & GitHub
 * IntelliJ
+* Git & GitHub
+* AWS EC2, RDS, S3, CodeDeploy
+* H2, MariaDB
+* Travis CI
+* Nginx, Tomcat
 * Mustache, JavaScript, jQuery
 
 ## 아키텍처
