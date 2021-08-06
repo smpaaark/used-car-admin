@@ -12,8 +12,8 @@ public class CommonResponseDto<T> {
 
     private String status;
     private String message;
-    private T data;
     private LocalDateTime responseDate;
+    private T data;
 
     @Builder
     public CommonResponseDto(String status, String message, T data) {

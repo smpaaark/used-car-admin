@@ -1,7 +1,6 @@
 package com.usedcar.admin.web;
 
 import com.usedcar.admin.domain.car.CarSearch;
-import com.usedcar.admin.domain.car.CarStatus;
 import com.usedcar.admin.service.car.CarDeleteResponseDto;
 import com.usedcar.admin.service.car.CarService;
 import com.usedcar.admin.web.dto.car.CarUpdateRequestDto;
@@ -20,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class CarApiController extends ExceptionController {
+public class CarApiApiController extends ExceptionApiController {
 
     private final CarService carService;
 

@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class ReleaseApiController extends ExceptionController {
+public class ReleaseApiApiController extends ExceptionApiController {
 
     private final ReleaseService releaseService;
 

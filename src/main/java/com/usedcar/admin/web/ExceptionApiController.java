@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class ExceptionController {
+public class ExceptionApiController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity exceptionHandler(Exception e) {
@@ -45,6 +45,16 @@ public class ExceptionController {
     @ExceptionHandler(AlreadyCanceledReleaseException.class)
     public ResponseEntity alreadyCanceledReleaseExceptionHandler(AlreadyCanceledReleaseException e) {
         log.info("\n\n=== alreadyCanceledReleaseExceptionHandler ===\n* message: " + e.getMessage());
+        return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
+    }
+
+    @ExceptionHandler(NotFoundCapitalException.class)
+    public ResponseEntity notFoundCapitalExceptionHandler(NotFoundCapitalException e) {
+        StringBuilder logBuilder = new StringBuilder();
+        logBuilder.append("\n\n");
+        logBuilder.append("=== notFoundCapitalExceptionHandler ===\n");
+        logBuilder.append("* message: " + e.getMessage());
+
         return ResponseEntity.badRequest().body(CommonResponseDto.createResponseDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
     }
 
